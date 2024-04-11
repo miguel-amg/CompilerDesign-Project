@@ -1,45 +1,99 @@
+# ----------------------------------------------------
+# Projeto final Processamento de Linguagens
+# Leonardo Filipe Lima Barroso, a100894
+# Miguel Ângelo Martins Guimarães, a100837
+# Pedro Andrade Carneiro, a100652
+# ----------------------------------------------------
+
+# Uso do programa:
+# Ir inserindo as expressões manualmente e clicando enter.
+# Assim que estiverem todas inseridas fazer CTRL + D (Visual studio)
+#
+# Alternativamente poderá ser inserido um ficheiro atráves do comando:
+# python3 anaSin.py < testFile.txt 
+
+#################################### GRAMATICA ####################################
+#  cont -> NUM cont
+#       | PONTO cont  
+#       | op cont
+#       | Empty
+#
+#  op -> + | - | / | *
+
+#################################### SETUP ####################################
+# Imports
 from anaLex import tokens
 import ply.yacc as yacc
+import sys
 
+# Variáveis hardcoded
+localResultado = "result"  # Pasta para os resultados
+debug = False               # Modo debug ligado ou desligado
 
-res={}
-res["Total A Pagar"]=(0,0)
+#################################### BOAS-VINDAS ####################################
+print(
+"""-------------------------------------
+Processamento de Linguagens
+Engenharia Informática (3º ano)
+Compilador de Forth
+-------------------------------------""")
 
+#################################### FUNÇÕES AUXILIARES ####################################
+def guardarResultado(local, resultado):
+    ficheiro = local + "/result.txt"
+    f = open(ficheiro, "w")
+    f.write(resultado)
+    f.close()
 
-def p_tudo(p):
-    "tudo : bloco tudo"
-    p[0]=p[1]+p[2]
+####################################  CODIGO  ####################################
+#------------------------------- REGRAS PARA CONT ------------------------------- 
+def p_cont_num(p):
+    'cont : NUM cont'
+    p[0] = "PUSHI " + str(p[1]) + '\n' + str(p[2])
+    if(debug): print("P_cont_num")
 
-def p_tudo_empty(p):
-    "tudo : empty"
-    p[0]=""
+def p_cont_ponto(p):
+    'cont : PONTO cont'
+    p[0] = "WRITEI\n" + str(p[2])
+    if(debug): print("P_cont_ponto ")
 
-def p_bloco(p):
-    'bloco : CATEGORIA DOISPONTOS linha linhas'
-    p[0]= p[1]+p[2]+"\n" +p[3]+p[4] +"\n"
+def p_cont_op(p):
+    'cont : op cont'
+    p[0] = p[1] + p[2]
+    if(debug): print("P_cont_op")
 
+def p_cont_empty(p):
+    'cont : empty'
+    p[0] = ''
+    if(debug): print("P_cont_empty")
 
-def p_linhas(p):
-    "linhas : linha linhas"
-    p[0]=p[1]+p[2]
+#------------------------------- REGRAS PARA OP  -------------------------------
+def p_op_sum(p):
+    'op : MAIS'
+    p[0] = "ADD\n"
+    if(debug): print("P_cont_add ADD")
 
-def p_linhas_empty(p):
-    "linhas : empty"
-    p[0]=""
+def p_op_menos(p):
+    'op : MENOS'
+    p[0] = "SUB\n"
+    if(debug): print("P_cont_sub SUB")
 
+def p_op_mul(p):
+    'op : MUL'
+    p[0] = "MUL\n"
+    if(debug): print("P_cont_mul MUL")
 
-def p_linha(p):
-    "linha : INDICE QUATROPONTOS PRODUTO QUATROPONTOS PRECO QUATROPONTOS QUANTIDADE PONTOVIRGULA"
-    res[p[3]]=(p[5],int(p[7]))
-    valorTotal=res["Total A Pagar"][0]+(p[5]*int(p[7]))
-    quantidadeTotal=res["Total A Pagar"][1]+int(p[7])
-    res["Total A Pagar"]= (valorTotal,quantidadeTotal)
-    p[0]=p[1]+p[2]+p[3]+p[4]+str(p[5])+p[6]+(p[7])+p[8]+"\n"
-
+def p_op_div(p):
+    'op : DIV'
+    p[0] = "DIV\n"
+    if(debug): print("P_cont_div DIV")
+#------------------------------- REGRAS PARA EMPTY -------------------------------
 def p_empty(p):
     'empty :'
     pass
+    if(debug): print("P_empty")
 
+#------------------------------- ERROS -------------------------------
 def p_error(p):
     print("Erro sintático no input!")
     if p:
@@ -48,26 +102,23 @@ def p_error(p):
         print("Erro sintático: fim inesperado do input")
 
 
-
-# Build the parser
+#################################### PARSER ####################################
+# Construir o parser
 parser = yacc.yacc()
 
-s = """
+# Iterar cada linha do input
+final = ""
+for linha in sys.stdin:
+    if(debug): print("DEBUG:")
+    result = parser.parse(linha)
+    print()
+    print("EXPRESSÃO RECEBIDA:")
+    print(linha)
+    print()
+    final += result
 
-"""
-result = parser.parse(s)
-print(result)
-for (a,b) in res.items():
-    print(a,b)
-
-
-
-# tudo: bloco tudo
-#     | E 
-#
-# bloco: CATEGORIA DOISPONTOS linha linhas
-#       
-# linhas: linha linhas
-#       | E
-#
-# linha: INDICE QUATROPONTOS PRODUTO QUATROPONTOS PRECO QUATROPONTOS QUANTIDADE PONTOVIRGULA
+# Obter resultado final e trata-lo
+print("RESULTADO FINAL:")
+print(final)
+guardarResultado(localResultado, final)
+print("Resultado armazenado com sucesso em: " + localResultado + "/resultado.txt")
