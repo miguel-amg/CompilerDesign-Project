@@ -13,18 +13,31 @@
 # python3 anaSin.py < testFile.txt 
 
 #################################### GRAMATICA ####################################
-#  cont -> NUM cont
-#       | PONTO cont  
-#       | op cont
-#       | Empty
+#  start -> cont                    // P1 - Conteudo
+#        | COLON ID cont SEMICOLON  // P2 - Função
 #
-#  op -> + | - | / | *
-
+#  cont -> NUM cont         // P3  - Inserir num na stack 
+#       | PONTO cont        // P4  - Print 
+#       | op cont           // P5  - Operação 
+#       | DUP cont          // P6  - Duplicar valor na stack
+#       | CHAR LETRA cont   // P7  - Inserir letra na stack (TALVEZ TENHA QUE METER NA STRING STACK????????????????????????)
+#       | SWAP cont         // P8  - Da swap aos dois ultimos elems (NAO ESTA A FUNCIONAR NA VM!!!!!!!!!!!!!!)
+#       | DROP cont         // P9  - Retira o primeiro elem da stack
+#       | STRPRINT cont     // P10 - Dá print a uma string
+#       | STRPRINT2 cont    // P11 - Dá print a uma string mas remove espaços consecutivos
+#       | Empty             // P12 - Vazio
+#
+#  op -> +      // P13 - Soma
+#     | -       // P14 - Subtração
+#     | /       // P15 - Divisão
+#     | *       // P16 - Multiplicação
+#     | mod     // P17 - Resto da divisão inteira
 #################################### SETUP ####################################
 # Imports
 from anaLex import tokens
 import ply.yacc as yacc
 import sys
+import re
 
 # Variáveis hardcoded
 localResultado = "result"  # Pasta para os resultados
@@ -45,7 +58,24 @@ def guardarResultado(local, resultado):
     f.write(resultado)
     f.close()
 
+# Transforma espaços continuos em um so espaço
+def removeEspacos(string):
+    regex = r'\s+'
+    return re.sub(regex, " ", string)
+    
+
 ####################################  CODIGO  ####################################
+#------------------------------- REGRAS PARA START -------------------------------
+def p_start_cont(p):
+    'start : cont'
+    p[0] = p[1]
+    if(debug): print("P_start_cont")
+
+def p_start_func(p):
+    'start : COLON ID cont SEMICOLON'
+    p[0] = p[1]
+    if(debug): print("P_start_cont")
+    
 #------------------------------- REGRAS PARA CONT ------------------------------- 
 def p_cont_num(p):
     'cont : NUM cont'
@@ -55,12 +85,44 @@ def p_cont_num(p):
 def p_cont_ponto(p):
     'cont : PONTO cont'
     p[0] = "WRITEI\n" + str(p[2])
-    if(debug): print("P_cont_ponto ")
+    if(debug): print("P_cont_ponto")
 
 def p_cont_op(p):
     'cont : op cont'
     p[0] = p[1] + p[2]
     if(debug): print("P_cont_op")
+
+def p_cont_dup(p):
+    'cont : DUP cont'
+    p[0] = "DUP 1\n" + str(p[2]) # Dup 1 na vm é duplicar o primeiro elem
+    if(debug): print("P_cont_dup")
+
+def p_cont_letra(p):
+    'cont : CHAR LETRA cont'
+    p[0] = "PUSHI " + str(ord(p[2])) + '\n' + str(p[3]) # A letra tem de ser int na stack
+    if(debug): print("P_cont_letra")
+
+def p_cont_swap(p):
+    'cont : SWAP cont'
+    p[0] = "SWAP\n" + str(p[2]) 
+    if(debug): print("P_cont_swap")
+
+def p_cont_drop(p):
+    'cont : DROP cont'
+    p[0] = "POP 1\n" + str(p[2]) # Pop 1 na vm tira o primeiro elem da stack 
+    if(debug): print("P_cont_drop")
+
+def p_cont_strprint(p):
+    'cont : STRPRINT cont' 
+    conteudoStr = '\"' + p[1][3:] # O p[1] é igual a ." teste" por isso temos de remover o .
+    p[0] = "PUSHS " + conteudoStr + "\nWRITES\n" + str(p[2])  
+    if(debug): print("P_cont_strprint")
+
+def p_cont_strprint2(p):
+    'cont : STRPRINT2 cont' 
+    conteudoStr = '\"' + removeEspacos(p[1][3:-1]) + '\"' # O p[1] é igual a ." teste" por isso temos de remover o .
+    p[0] = "PUSHS " + conteudoStr + "\nWRITES\n" + str(p[2]) 
+    if(debug): print("P_cont_strprint")
 
 def p_cont_empty(p):
     'cont : empty'
@@ -87,6 +149,11 @@ def p_op_div(p):
     'op : DIV'
     p[0] = "DIV\n"
     if(debug): print("P_cont_div DIV")
+
+def p_op_mod(p):
+    'op : MOD'
+    p[0] = "MOD\n"
+    if(debug): print("P_cont_mod MOD")
 #------------------------------- REGRAS PARA EMPTY -------------------------------
 def p_empty(p):
     'empty :'

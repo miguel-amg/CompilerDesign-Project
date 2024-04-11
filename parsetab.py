@@ -6,9 +6,9 @@ _tabversion = '3.10'
 
 _lr_method = 'LALR'
 
-_lr_signature = 'CHAR DIV LB MAIS MENOS MUL NUM PERCENTAGEM PONTO POTENCIA RBcont : NUM contcont : PONTO contcont : op contcont : emptyop : MAISop : MENOSop : MULop : DIVempty :'
+_lr_signature = 'CHAR COLON DIV DROP DUP EMIT ID LB LETRA MAIS MENOS MOD MUL NUM OVER PONTO QUOTE RB ROT SEMICOLON STRPRINT STRPRINT2 SWAPstart : contstart : COLON ID cont SEMICOLONcont : NUM contcont : PONTO contcont : op contcont : DUP contcont : CHAR LETRA contcont : SWAP contcont : DROP contcont : STRPRINT contcont : STRPRINT2 contcont : emptyop : MAISop : MENOSop : MULop : DIVop : MODempty :'
     
-_lr_action_items = {'NUM':([0,2,3,4,6,7,8,9,],[2,2,2,2,-5,-6,-7,-8,]),'PONTO':([0,2,3,4,6,7,8,9,],[3,3,3,3,-5,-6,-7,-8,]),'MAIS':([0,2,3,4,6,7,8,9,],[6,6,6,6,-5,-6,-7,-8,]),'MENOS':([0,2,3,4,6,7,8,9,],[7,7,7,7,-5,-6,-7,-8,]),'MUL':([0,2,3,4,6,7,8,9,],[8,8,8,8,-5,-6,-7,-8,]),'DIV':([0,2,3,4,6,7,8,9,],[9,9,9,9,-5,-6,-7,-8,]),'$end':([0,1,2,3,4,5,6,7,8,9,10,11,12,],[-9,0,-9,-9,-9,-4,-5,-6,-7,-8,-1,-2,-3,]),}
+_lr_action_items = {'COLON':([0,],[3,]),'NUM':([0,4,5,6,7,9,10,11,12,14,15,16,17,18,19,24,],[4,4,4,4,4,4,4,4,4,-13,-14,-15,-16,-17,4,4,]),'PONTO':([0,4,5,6,7,9,10,11,12,14,15,16,17,18,19,24,],[5,5,5,5,5,5,5,5,5,-13,-14,-15,-16,-17,5,5,]),'DUP':([0,4,5,6,7,9,10,11,12,14,15,16,17,18,19,24,],[7,7,7,7,7,7,7,7,7,-13,-14,-15,-16,-17,7,7,]),'CHAR':([0,4,5,6,7,9,10,11,12,14,15,16,17,18,19,24,],[8,8,8,8,8,8,8,8,8,-13,-14,-15,-16,-17,8,8,]),'SWAP':([0,4,5,6,7,9,10,11,12,14,15,16,17,18,19,24,],[9,9,9,9,9,9,9,9,9,-13,-14,-15,-16,-17,9,9,]),'DROP':([0,4,5,6,7,9,10,11,12,14,15,16,17,18,19,24,],[10,10,10,10,10,10,10,10,10,-13,-14,-15,-16,-17,10,10,]),'STRPRINT':([0,4,5,6,7,9,10,11,12,14,15,16,17,18,19,24,],[11,11,11,11,11,11,11,11,11,-13,-14,-15,-16,-17,11,11,]),'STRPRINT2':([0,4,5,6,7,9,10,11,12,14,15,16,17,18,19,24,],[12,12,12,12,12,12,12,12,12,-13,-14,-15,-16,-17,12,12,]),'MAIS':([0,4,5,6,7,9,10,11,12,14,15,16,17,18,19,24,],[14,14,14,14,14,14,14,14,14,-13,-14,-15,-16,-17,14,14,]),'MENOS':([0,4,5,6,7,9,10,11,12,14,15,16,17,18,19,24,],[15,15,15,15,15,15,15,15,15,-13,-14,-15,-16,-17,15,15,]),'MUL':([0,4,5,6,7,9,10,11,12,14,15,16,17,18,19,24,],[16,16,16,16,16,16,16,16,16,-13,-14,-15,-16,-17,16,16,]),'DIV':([0,4,5,6,7,9,10,11,12,14,15,16,17,18,19,24,],[17,17,17,17,17,17,17,17,17,-13,-14,-15,-16,-17,17,17,]),'MOD':([0,4,5,6,7,9,10,11,12,14,15,16,17,18,19,24,],[18,18,18,18,18,18,18,18,18,-13,-14,-15,-16,-17,18,18,]),'$end':([0,1,2,4,5,6,7,9,10,11,12,13,14,15,16,17,18,20,21,22,23,24,25,26,27,28,30,31,],[-18,0,-1,-18,-18,-18,-18,-18,-18,-18,-18,-12,-13,-14,-15,-16,-17,-3,-4,-5,-6,-18,-8,-9,-10,-11,-7,-2,]),'ID':([3,],[19,]),'SEMICOLON':([4,5,6,7,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,],[-18,-18,-18,-18,-18,-18,-18,-18,-12,-13,-14,-15,-16,-17,-18,-3,-4,-5,-6,-18,-8,-9,-10,-11,31,-7,]),'LETRA':([8,],[24,]),}
 
 _lr_action = {}
 for _k, _v in _lr_action_items.items():
@@ -17,7 +17,7 @@ for _k, _v in _lr_action_items.items():
       _lr_action[_x][_k] = _y
 del _lr_action_items
 
-_lr_goto_items = {'cont':([0,2,3,4,],[1,10,11,12,]),'op':([0,2,3,4,],[4,4,4,4,]),'empty':([0,2,3,4,],[5,5,5,5,]),}
+_lr_goto_items = {'start':([0,],[1,]),'cont':([0,4,5,6,7,9,10,11,12,19,24,],[2,20,21,22,23,25,26,27,28,29,30,]),'op':([0,4,5,6,7,9,10,11,12,19,24,],[6,6,6,6,6,6,6,6,6,6,6,]),'empty':([0,4,5,6,7,9,10,11,12,19,24,],[13,13,13,13,13,13,13,13,13,13,13,]),}
 
 _lr_goto = {}
 for _k, _v in _lr_goto_items.items():
@@ -26,14 +26,23 @@ for _k, _v in _lr_goto_items.items():
        _lr_goto[_x][_k] = _y
 del _lr_goto_items
 _lr_productions = [
-  ("S' -> cont","S'",1,None,None,None),
-  ('cont -> NUM cont','cont',2,'p_cont_num','anaSin.py',25),
-  ('cont -> PONTO cont','cont',2,'p_cont_ponto','anaSin.py',30),
-  ('cont -> op cont','cont',2,'p_cont_op','anaSin.py',35),
-  ('cont -> empty','cont',1,'p_cont_empty','anaSin.py',40),
-  ('op -> MAIS','op',1,'p_op_sum','anaSin.py',46),
-  ('op -> MENOS','op',1,'p_op_menos','anaSin.py',51),
-  ('op -> MUL','op',1,'p_op_mul','anaSin.py',56),
-  ('op -> DIV','op',1,'p_op_div','anaSin.py',61),
-  ('empty -> <empty>','empty',0,'p_empty','anaSin.py',66),
+  ("S' -> start","S'",1,None,None,None),
+  ('start -> cont','start',1,'p_start_cont','anaSin.py',69),
+  ('start -> COLON ID cont SEMICOLON','start',4,'p_start_func','anaSin.py',74),
+  ('cont -> NUM cont','cont',2,'p_cont_num','anaSin.py',80),
+  ('cont -> PONTO cont','cont',2,'p_cont_ponto','anaSin.py',85),
+  ('cont -> op cont','cont',2,'p_cont_op','anaSin.py',90),
+  ('cont -> DUP cont','cont',2,'p_cont_dup','anaSin.py',95),
+  ('cont -> CHAR LETRA cont','cont',3,'p_cont_letra','anaSin.py',100),
+  ('cont -> SWAP cont','cont',2,'p_cont_swap','anaSin.py',105),
+  ('cont -> DROP cont','cont',2,'p_cont_drop','anaSin.py',110),
+  ('cont -> STRPRINT cont','cont',2,'p_cont_strprint','anaSin.py',115),
+  ('cont -> STRPRINT2 cont','cont',2,'p_cont_strprint2','anaSin.py',121),
+  ('cont -> empty','cont',1,'p_cont_empty','anaSin.py',127),
+  ('op -> MAIS','op',1,'p_op_sum','anaSin.py',133),
+  ('op -> MENOS','op',1,'p_op_menos','anaSin.py',138),
+  ('op -> MUL','op',1,'p_op_mul','anaSin.py',143),
+  ('op -> DIV','op',1,'p_op_div','anaSin.py',148),
+  ('op -> MOD','op',1,'p_op_mod','anaSin.py',153),
+  ('empty -> <empty>','empty',0,'p_empty','anaSin.py',158),
 ]
