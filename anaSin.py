@@ -18,20 +18,20 @@
 #
 #  cont -> NUM cont         // P3  - Inserir num na stack 
 #       | PONTO cont        // P4  - Print 
-#       | op cont           // P5  - Operação 
-#       | DUP cont          // P6  - Duplicar valor na stack
-#       | CHAR LETRA cont   // P7  - Inserir letra na stack (TALVEZ TENHA QUE METER NA STRING STACK????????????????????????)
-#       | SWAP cont         // P8  - Da swap aos dois ultimos elems (NAO ESTA A FUNCIONAR NA VM!!!!!!!!!!!!!!)
-#       | DROP cont         // P9  - Retira o primeiro elem da stack
-#       | STRPRINT cont     // P10 - Dá print a uma string
-#       | STRPRINT2 cont    // P11 - Dá print a uma string mas remove espaços consecutivos
-#       | Empty             // P12 - Vazio
-#
-#  op -> +      // P13 - Soma
-#     | -       // P14 - Subtração
-#     | /       // P15 - Divisão
-#     | *       // P16 - Multiplicação
-#     | mod     // P17 - Resto da divisão inteira
+#       | MAIS cont         // P5  - Soma +
+#       | MENOS cont        // P6  - Subtração -
+#       | MUL cont          // P7  - Multiplicação *
+#       | DIV cont          // P8  - Divisão /
+#       | MOD cont          // P9  - Resto da divisã inteira (mod)
+#       | DUP cont          // P10 - Duplicar valor na stack
+#       | CHAR LETRA cont   // P11 - Inserir letra na stack (TALVEZ TENHA QUE METER NA STRING STACK????????????????????????)
+#       | SWAP cont         // P12 - Da swap aos dois ultimos elems 
+#       | DROP cont         // P13 - Retira o primeiro elem da stack
+#       | STRPRINT cont     // P14 - Dá print a uma string
+#       | STRPRINT2 cont    // P15 - Dá print a uma string mas remove espaços consecutivos
+#       | COMMENT cont      // P16 - Comentario
+#       | Empty             // P17 - Vazio
+
 #################################### SETUP ####################################
 # Imports
 from anaLex import tokens
@@ -57,13 +57,7 @@ def guardarResultado(local, resultado):
     f = open(ficheiro, "w")
     f.write(resultado)
     f.close()
-
-# Transforma espaços continuos em um so espaço
-def removeEspacos(string):
-    regex = r'\s+'
-    return re.sub(regex, " ", string)
     
-
 ####################################  CODIGO  ####################################
 #------------------------------- REGRAS PARA START -------------------------------
 def p_start_cont(p):
@@ -87,10 +81,30 @@ def p_cont_ponto(p):
     p[0] = "WRITEI\n" + str(p[2])
     if(debug): print("P_cont_ponto")
 
-def p_cont_op(p):
-    'cont : op cont'
-    p[0] = p[1] + p[2]
-    if(debug): print("P_cont_op")
+def p_cont_sum(p):
+    'cont : MAIS cont'
+    p[0] = "ADD\n"
+    if(debug): print("P_cont_sum ADD")
+
+def p_cont_sub(p):
+    'cont : MENOS cont'
+    p[0] = "SUB\n"
+    if(debug): print("P_cont_sub SUB")
+
+def p_cont_mul(p):
+    'cont : MUL cont'
+    p[0] = "MUL\n"
+    if(debug): print("P_cont_mul MUL")
+
+def p_cont_div(p):
+    'cont : DIV cont'
+    p[0] = "DIV\n"
+    if(debug): print("P_cont_div DIV")
+
+def p_cont_mod(p):
+    'cont : MOD cont'
+    p[0] = "MOD\n"
+    if(debug): print("P_cont_mod MOD")
 
 def p_cont_dup(p):
     'cont : DUP cont'
@@ -114,46 +128,24 @@ def p_cont_drop(p):
 
 def p_cont_strprint(p):
     'cont : STRPRINT cont' 
-    conteudoStr = '\"' + p[1][3:] # O p[1] é igual a ." teste" por isso temos de remover o .
-    p[0] = "PUSHS " + conteudoStr + "\nWRITES\n" + str(p[2])  
+    p[0] = f"PUSHS \"{p[1]}\" \nWRITES\n" + str(p[2])  
     if(debug): print("P_cont_strprint")
 
 def p_cont_strprint2(p):
     'cont : STRPRINT2 cont' 
-    conteudoStr = '\"' + removeEspacos(p[1][3:-1]) + '\"' # O p[1] é igual a ." teste" por isso temos de remover o .
-    p[0] = "PUSHS " + conteudoStr + "\nWRITES\n" + str(p[2]) 
-    if(debug): print("P_cont_strprint")
+    p[0] = f"PUSHS \"{p[1]}\" \nWRITES\n" + str(p[2]) 
+    if(debug): print("P_cont_strprint2")
+
+def p_cont_comment(p):
+    'cont : COMMENT cont' 
+    p[0] = ''
+    if(debug): print("P_cont_comment")
 
 def p_cont_empty(p):
     'cont : empty'
     p[0] = ''
     if(debug): print("P_cont_empty")
 
-#------------------------------- REGRAS PARA OP  -------------------------------
-def p_op_sum(p):
-    'op : MAIS'
-    p[0] = "ADD\n"
-    if(debug): print("P_cont_add ADD")
-
-def p_op_menos(p):
-    'op : MENOS'
-    p[0] = "SUB\n"
-    if(debug): print("P_cont_sub SUB")
-
-def p_op_mul(p):
-    'op : MUL'
-    p[0] = "MUL\n"
-    if(debug): print("P_cont_mul MUL")
-
-def p_op_div(p):
-    'op : DIV'
-    p[0] = "DIV\n"
-    if(debug): print("P_cont_div DIV")
-
-def p_op_mod(p):
-    'op : MOD'
-    p[0] = "MOD\n"
-    if(debug): print("P_cont_mod MOD")
 #------------------------------- REGRAS PARA EMPTY -------------------------------
 def p_empty(p):
     'empty :'
@@ -168,13 +160,12 @@ def p_error(p):
     else:
         print("Erro sintático: fim inesperado do input")
 
-
 #################################### PARSER ####################################
 # Construir o parser
 parser = yacc.yacc()
 
 # Iterar cada linha do input
-final = ""
+final = "start\n"
 for linha in sys.stdin:
     if(debug): print("DEBUG:")
     result = parser.parse(linha)
@@ -183,6 +174,7 @@ for linha in sys.stdin:
     print(linha)
     print()
     final += result
+final += "stop"
 
 # Obter resultado final e trata-lo
 print("RESULTADO FINAL:")

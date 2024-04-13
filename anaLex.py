@@ -7,6 +7,13 @@
 
 # Imports
 import ply.lex as lex
+import re
+
+######################## FUNÇÕES AUXILIARES ########################
+# Transforma espaços continuos em um so espaço
+def removeEspacos(string):
+    regex = r'\s+'
+    return re.sub(regex, " ", string)
 
 ######################## TOKENS ########################
 # Tokens reservados
@@ -15,10 +22,10 @@ reserved = {
    'EMIT' : 'EMIT',  # emit - dá print a um char (passa de int para char)
    'CHAR' : 'CHAR',  # char - declarar um caracter
    'DUP'  : 'DUP',   # dup  - duplicar valor na stack
-   'SWAP' : 'SWAP',  # swap  - trocar os dois ultimos valores na stack
-   'DROP' : 'DROP',  # drop  - retira o primeiro elem da stack
+   'SWAP' : 'SWAP',  # swap - trocar os dois ultimos valores na stack
+   'DROP' : 'DROP',  # drop - retira o primeiro elem da stack
    'OVER' : 'OVER',  # over -  faz uma copia do segundo item e coloca no topo
-   'ROT'  : 'ROT'    # rot -  coloca o terceiro item no topo
+   'ROT'  : 'ROT'    # rot  -  coloca o terceiro item no topo
 }
 
 # Todos os tokens
@@ -29,16 +36,13 @@ tokens = (
     "DIV",    # / - divisão
     "PONTO",  # . - print do valor no topo da stack
     "COLON",  # : - inicio de uma função
-    "SEMICOLON",  # ; - fim de função
-    "LB",
-    "RB",
-    "NUM",
-    "ID",
+    "SEMICOLON", # ; - fim de função
+    "NUM",       # 123 - Numero
+    "ID",        # abc123 - Usado nas funções como nome
     "STRPRINT",  # ." txttxtxtxt txtxt" da print ao texto no interior
     "STRPRINT2", # .( txttxtxtxt txtxt) da print ao texto no interior mas transforma espaços consecutivos em um só espaço
-    #"COMMENT",   # ( txtxt txtxt) é um comentario
-    "QUOTE",    # "  - Usado para inicio de strings... etc
-    "LETRA"
+    "COMMENT",   # ( txtxt txtxt) é um comentario
+    "LETRA"      # Representa uma letra
 ) + tuple(reserved.values())
 
 ######################## REGEX ########################
@@ -50,11 +54,7 @@ t_DIV = r'/'
 t_PONTO = r'^\. |\s\.\s| \.$' # Print do valor no topo da stack (O ponto nunca esta colado a nada) (talvez com tab morra?)
 t_COLON = r':'      # Inicio de função
 t_SEMICOLON = r';'  # Fim de função
-t_LB = r'\('
-t_RB = r'\)'
-t_STRPRINT  = r'\."\s[^"]+"'    # Da print a uma string
-t_STRPRINT2 = r'\.\(\s[^\)]+\)' # Da print a uma string (mas transforma espaços consequtivos em um só)
-t_QUOTE = r'\"'        # Usado em strings
+t_COMMENT = r'\(\s[^\)]+\)' # Comentario
 t_LETRA = r'[A-Za-z]'  # Regex para reconhecer uma única letra
 
 def t_NUM(t):
@@ -66,6 +66,19 @@ def t_NUM(t):
 def t_ID(t):
     r'[A-Za-z_][A-Za-z_0-9]+'
     t.type = reserved.get(t.value.upper(),'ID') # Verificar se leu uma palavra reservada sem querer, senão valor default = VAR
+    return t
+
+# Dá print a uma string ." txtxtxtx txtxtx"
+def t_STRPRINT(t):
+    r'\."\s[^"]+"'
+    t.value = t.value[3:-1]  # O valor é o conteudo da string entre aspas
+    return t
+
+# Dá print a uma string . (txtxtxtx     txtxtx) transforma espaços consequtivos em um só
+def t_STRPRINT2(t):
+    r'\.\(\s[^\)]+\)'
+    conteudoStr = t.value[3:-1]  # O valor é o conteudo da string entre parentesis
+    t.value = removeEspacos(conteudoStr)
     return t
 
 t_ignore = ' \n\t\r'
