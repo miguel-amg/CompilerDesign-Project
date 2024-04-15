@@ -37,11 +37,12 @@
 from anaLex import tokens
 import ply.yacc as yacc
 import sys
-import re
+import os
 
 # Variáveis hardcoded
 localResultado = "result"  # Pasta para os resultados
-debug = False               # Modo debug ligado ou desligado
+ficheiroFuncoes   = "recursos/funcoes.txt"  # Ficheiro com a definição das funções para a vm
+debug = False # Modo debug ligado ou desligado
 
 #################################### BOAS-VINDAS ####################################
 print(
@@ -52,11 +53,33 @@ Compilador de Forth
 -------------------------------------""")
 
 #################################### FUNÇÕES AUXILIARES ####################################
+# Guardar o resultaod final obtido
 def guardarResultado(local, resultado):
-    ficheiro = local + "/result.txt"
-    f = open(ficheiro, "w")
-    f.write(resultado)
-    f.close()
+    try:
+        # Verificar se existe a pasta
+        if not os.path.exists(local): os.makedirs(local)
+        
+        # Caminho completo para o ficheiro result.txt
+        ficheiro = os.path.join(local, "result.txt")
+
+        # Abre o arquivo em modo de escrita
+        f = open(ficheiro, "w")
+        f.write(resultado)
+
+    except Exception as e:
+        raise Exception("Erro ao guardar o resultado: {e}")
+
+# Carregar as funções para injetar no resultado final
+def carregarFuncoes(ficheiro):
+    try:
+        f = open(ficheiro, 'r')
+        conteudo = f.read()
+        return conteudo
+    except FileNotFoundError:
+        raise Exception("Ficheiro de funções não encontrado!")
+    except Exception as e:
+        raise Exception(f"Erro ao carregar funções: {e}")
+    
     
 ####################################  CODIGO  ####################################
 #------------------------------- REGRAS PARA START -------------------------------
@@ -164,6 +187,9 @@ def p_error(p):
 # Construir o parser
 parser = yacc.yacc()
 
+# Carregar as funções para inserir no final
+funcoes = carregarFuncoes(ficheiroFuncoes)
+
 # Iterar cada linha do input
 final = "start\n"
 for linha in sys.stdin:
@@ -174,7 +200,7 @@ for linha in sys.stdin:
     print(linha)
     print()
     final += result
-final += "stop"
+final += "stop\n" + funcoes # Colocar no final do resultado as funções e stop 
 
 # Obter resultado final e trata-lo
 print("RESULTADO FINAL:")

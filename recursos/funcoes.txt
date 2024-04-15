@@ -1,8 +1,4 @@
-start
-PUSHI 2
-PUSHI 3
-ADD
-stop//////////// Funções gerais //////////// 
+//////////// Funções gerais //////////// 
 somar:
 	pushfp
 	load -1
