@@ -30,6 +30,8 @@
 #       | STRPRINT cont     // P14 - Dá print a uma string
 #       | STRPRINT2 cont    // P15 - Dá print a uma string mas remove espaços consecutivos
 #       | COMMENT cont      // P16 - Comentario
+#       | ENDCOMMENT cont   // P16 - Comentario de linha
+#       | ID cont           // P17 - Chamar função
 #       | Empty             // P17 - Vazio
 
 #################################### SETUP ####################################
@@ -43,6 +45,7 @@ import os
 localResultado = "result"  # Pasta para os resultados
 ficheiroFuncoes   = "recursos/funcoes.txt"  # Ficheiro com a definição das funções para a vm
 debug = False # Modo debug ligado ou desligado
+funcs = {} # Armazenar o codigo das funções
 
 #################################### BOAS-VINDAS ####################################
 print(
@@ -88,10 +91,20 @@ def p_start_cont(p):
     p[0] = p[1]
     if(debug): print("P_start_cont")
 
+# Quando uma função é definida o seu codigo é armazenado para quando for chamada ser inserido diretamente
 def p_start_func(p):
     'start : COLON ID cont SEMICOLON'
-    p[0] = p[1]
-    if(debug): print("P_start_cont")
+    p[0] = ''
+
+    global funcs
+
+    # Lançar erro caso já esteja definida esta função
+    if(p[2] in funcs):
+        raise Exception(f"Compiling; Duplicate function!")
+    
+    # Armazenar o codigo da função
+    funcs[p[2]] = '// Inserida função ' + p[2] + '\n' + p[3] + "// Fim função " + p[2] # Armazenar o codigo da função
+    if(debug): print("P_start_cont, Função guardada")
     
 #------------------------------- REGRAS PARA CONT ------------------------------- 
 def p_cont_num(p):
@@ -106,27 +119,27 @@ def p_cont_ponto(p):
 
 def p_cont_sum(p):
     'cont : MAIS cont'
-    p[0] = "ADD\n"
+    p[0] = "ADD\n" + str(p[2])
     if(debug): print("P_cont_sum ADD")
 
 def p_cont_sub(p):
     'cont : MENOS cont'
-    p[0] = "SUB\n"
+    p[0] = "SUB\n" + str(p[2])
     if(debug): print("P_cont_sub SUB")
 
 def p_cont_mul(p):
     'cont : MUL cont'
-    p[0] = "MUL\n"
+    p[0] = "MUL\n" + str(p[2])
     if(debug): print("P_cont_mul MUL")
 
 def p_cont_div(p):
     'cont : DIV cont'
-    p[0] = "DIV\n"
+    p[0] = "DIV\n" + str(p[2])
     if(debug): print("P_cont_div DIV")
 
 def p_cont_mod(p):
     'cont : MOD cont'
-    p[0] = "MOD\n"
+    p[0] = "MOD\n" + str(p[2])
     if(debug): print("P_cont_mod MOD")
 
 def p_cont_dup(p):
@@ -161,8 +174,19 @@ def p_cont_strprint2(p):
 
 def p_cont_comment(p):
     'cont : COMMENT cont' 
-    p[0] = ''
+    p[0] = '' + str(p[2])
     if(debug): print("P_cont_comment")
+
+def p_cont_endcomment(p):
+    'cont : ENDCOMMENT cont' 
+    p[0] = '' 
+    if(debug): print("P_cont_endcomment")
+
+def p_cont_func(p):
+    'cont : ID cont' 
+    global funcs
+    p[0] = funcs[p[1]] 
+    if(debug): print("P_cont_func")
 
 def p_cont_empty(p):
     'cont : empty'
@@ -200,7 +224,8 @@ for linha in sys.stdin:
     print(linha)
     print()
     final += result
-final += "stop\n" + funcoes # Colocar no final do resultado as funções e stop 
+final += "stop\n"
+# (CODIGO ANTIGO FUNCOES PREDEFINIDAS) final += "stop\n" + funcoes # Colocar no final do resultado as funções e stop 
 
 # Obter resultado final e trata-lo
 print("RESULTADO FINAL:")

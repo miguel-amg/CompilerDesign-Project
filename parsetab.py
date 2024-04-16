@@ -6,9 +6,9 @@ _tabversion = '3.10'
 
 _lr_method = 'LALR'
 
-_lr_signature = 'CHAR COLON COMMENT DIV DROP DUP EMIT ID LETRA MAIS MENOS MOD MUL NUM OVER PONTO ROT SEMICOLON STRPRINT STRPRINT2 SWAPstart : contstart : COLON ID cont SEMICOLONcont : NUM contcont : PONTO contcont : MAIS contcont : MENOS contcont : MUL contcont : DIV contcont : MOD contcont : DUP contcont : CHAR LETRA contcont : SWAP contcont : DROP contcont : STRPRINT contcont : STRPRINT2 contcont : COMMENT contcont : emptyempty :'
+_lr_signature = 'CHAR COLON COMMENT DIV DROP DUP EMIT ENDCOMMENT ID LETRA MAIS MENOS MOD MUL NUM OVER PONTO ROT SEMICOLON STRPRINT STRPRINT2 SWAPstart : contstart : COLON ID cont SEMICOLONcont : NUM contcont : PONTO contcont : MAIS contcont : MENOS contcont : MUL contcont : DIV contcont : MOD contcont : DUP contcont : CHAR LETRA contcont : SWAP contcont : DROP contcont : STRPRINT contcont : STRPRINT2 contcont : COMMENT contcont : ENDCOMMENT contcont : ID contcont : emptyempty :'
     
-_lr_action_items = {'COLON':([0,],[3,]),'NUM':([0,4,5,6,7,8,9,10,11,13,14,15,16,17,19,28,],[4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,]),'PONTO':([0,4,5,6,7,8,9,10,11,13,14,15,16,17,19,28,],[5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,]),'MAIS':([0,4,5,6,7,8,9,10,11,13,14,15,16,17,19,28,],[6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,]),'MENOS':([0,4,5,6,7,8,9,10,11,13,14,15,16,17,19,28,],[7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,]),'MUL':([0,4,5,6,7,8,9,10,11,13,14,15,16,17,19,28,],[8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,]),'DIV':([0,4,5,6,7,8,9,10,11,13,14,15,16,17,19,28,],[9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,]),'MOD':([0,4,5,6,7,8,9,10,11,13,14,15,16,17,19,28,],[10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,]),'DUP':([0,4,5,6,7,8,9,10,11,13,14,15,16,17,19,28,],[11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,]),'CHAR':([0,4,5,6,7,8,9,10,11,13,14,15,16,17,19,28,],[12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,]),'SWAP':([0,4,5,6,7,8,9,10,11,13,14,15,16,17,19,28,],[13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,]),'DROP':([0,4,5,6,7,8,9,10,11,13,14,15,16,17,19,28,],[14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,]),'STRPRINT':([0,4,5,6,7,8,9,10,11,13,14,15,16,17,19,28,],[15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,]),'STRPRINT2':([0,4,5,6,7,8,9,10,11,13,14,15,16,17,19,28,],[16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,]),'COMMENT':([0,4,5,6,7,8,9,10,11,13,14,15,16,17,19,28,],[17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,]),'$end':([0,1,2,4,5,6,7,8,9,10,11,13,14,15,16,17,18,20,21,22,23,24,25,26,27,28,29,30,31,32,33,35,36,],[-18,0,-1,-18,-18,-18,-18,-18,-18,-18,-18,-18,-18,-18,-18,-18,-17,-3,-4,-5,-6,-7,-8,-9,-10,-18,-12,-13,-14,-15,-16,-11,-2,]),'ID':([3,],[19,]),'SEMICOLON':([4,5,6,7,8,9,10,11,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,],[-18,-18,-18,-18,-18,-18,-18,-18,-18,-18,-18,-18,-18,-17,-18,-3,-4,-5,-6,-7,-8,-9,-10,-18,-12,-13,-14,-15,-16,36,-11,]),'LETRA':([12,],[28,]),}
+_lr_action_items = {'COLON':([0,],[3,]),'NUM':([0,4,5,6,7,8,9,10,11,12,14,15,16,17,18,19,21,31,],[5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,]),'PONTO':([0,4,5,6,7,8,9,10,11,12,14,15,16,17,18,19,21,31,],[6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,]),'MAIS':([0,4,5,6,7,8,9,10,11,12,14,15,16,17,18,19,21,31,],[7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,]),'MENOS':([0,4,5,6,7,8,9,10,11,12,14,15,16,17,18,19,21,31,],[8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,]),'MUL':([0,4,5,6,7,8,9,10,11,12,14,15,16,17,18,19,21,31,],[9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,]),'DIV':([0,4,5,6,7,8,9,10,11,12,14,15,16,17,18,19,21,31,],[10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,]),'MOD':([0,4,5,6,7,8,9,10,11,12,14,15,16,17,18,19,21,31,],[11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,]),'DUP':([0,4,5,6,7,8,9,10,11,12,14,15,16,17,18,19,21,31,],[12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,]),'CHAR':([0,4,5,6,7,8,9,10,11,12,14,15,16,17,18,19,21,31,],[13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,]),'SWAP':([0,4,5,6,7,8,9,10,11,12,14,15,16,17,18,19,21,31,],[14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,]),'DROP':([0,4,5,6,7,8,9,10,11,12,14,15,16,17,18,19,21,31,],[15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,]),'STRPRINT':([0,4,5,6,7,8,9,10,11,12,14,15,16,17,18,19,21,31,],[16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,]),'STRPRINT2':([0,4,5,6,7,8,9,10,11,12,14,15,16,17,18,19,21,31,],[17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,]),'COMMENT':([0,4,5,6,7,8,9,10,11,12,14,15,16,17,18,19,21,31,],[18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,]),'ENDCOMMENT':([0,4,5,6,7,8,9,10,11,12,14,15,16,17,18,19,21,31,],[19,19,19,19,19,19,19,19,19,19,19,19,19,19,19,19,19,19,]),'ID':([0,3,4,5,6,7,8,9,10,11,12,14,15,16,17,18,19,21,31,],[4,21,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,]),'$end':([0,1,2,4,5,6,7,8,9,10,11,12,14,15,16,17,18,19,20,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,39,40,],[-20,0,-1,-20,-20,-20,-20,-20,-20,-20,-20,-20,-20,-20,-20,-20,-20,-20,-19,-18,-3,-4,-5,-6,-7,-8,-9,-10,-20,-12,-13,-14,-15,-16,-17,-11,-2,]),'SEMICOLON':([4,5,6,7,8,9,10,11,12,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,],[-20,-20,-20,-20,-20,-20,-20,-20,-20,-20,-20,-20,-20,-20,-20,-19,-20,-18,-3,-4,-5,-6,-7,-8,-9,-10,-20,-12,-13,-14,-15,-16,-17,40,-11,]),'LETRA':([13,],[31,]),}
 
 _lr_action = {}
 for _k, _v in _lr_action_items.items():
@@ -17,7 +17,7 @@ for _k, _v in _lr_action_items.items():
       _lr_action[_x][_k] = _y
 del _lr_action_items
 
-_lr_goto_items = {'start':([0,],[1,]),'cont':([0,4,5,6,7,8,9,10,11,13,14,15,16,17,19,28,],[2,20,21,22,23,24,25,26,27,29,30,31,32,33,34,35,]),'empty':([0,4,5,6,7,8,9,10,11,13,14,15,16,17,19,28,],[18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,]),}
+_lr_goto_items = {'start':([0,],[1,]),'cont':([0,4,5,6,7,8,9,10,11,12,14,15,16,17,18,19,21,31,],[2,22,23,24,25,26,27,28,29,30,32,33,34,35,36,37,38,39,]),'empty':([0,4,5,6,7,8,9,10,11,12,14,15,16,17,18,19,21,31,],[20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,]),}
 
 _lr_goto = {}
 for _k, _v in _lr_goto_items.items():
@@ -27,22 +27,24 @@ for _k, _v in _lr_goto_items.items():
 del _lr_goto_items
 _lr_productions = [
   ("S' -> start","S'",1,None,None,None),
-  ('start -> cont','start',1,'p_start_cont','anaSin.py',64),
-  ('start -> COLON ID cont SEMICOLON','start',4,'p_start_func','anaSin.py',69),
-  ('cont -> NUM cont','cont',2,'p_cont_num','anaSin.py',75),
-  ('cont -> PONTO cont','cont',2,'p_cont_ponto','anaSin.py',80),
-  ('cont -> MAIS cont','cont',2,'p_cont_sum','anaSin.py',85),
-  ('cont -> MENOS cont','cont',2,'p_cont_sub','anaSin.py',90),
-  ('cont -> MUL cont','cont',2,'p_cont_mul','anaSin.py',95),
-  ('cont -> DIV cont','cont',2,'p_cont_div','anaSin.py',100),
-  ('cont -> MOD cont','cont',2,'p_cont_mod','anaSin.py',105),
-  ('cont -> DUP cont','cont',2,'p_cont_dup','anaSin.py',110),
-  ('cont -> CHAR LETRA cont','cont',3,'p_cont_letra','anaSin.py',115),
-  ('cont -> SWAP cont','cont',2,'p_cont_swap','anaSin.py',120),
-  ('cont -> DROP cont','cont',2,'p_cont_drop','anaSin.py',125),
-  ('cont -> STRPRINT cont','cont',2,'p_cont_strprint','anaSin.py',130),
-  ('cont -> STRPRINT2 cont','cont',2,'p_cont_strprint2','anaSin.py',135),
-  ('cont -> COMMENT cont','cont',2,'p_cont_comment','anaSin.py',140),
-  ('cont -> empty','cont',1,'p_cont_empty','anaSin.py',145),
-  ('empty -> <empty>','empty',0,'p_empty','anaSin.py',151),
+  ('start -> cont','start',1,'p_start_cont','anaSin.py',90),
+  ('start -> COLON ID cont SEMICOLON','start',4,'p_start_func','anaSin.py',95),
+  ('cont -> NUM cont','cont',2,'p_cont_num','anaSin.py',105),
+  ('cont -> PONTO cont','cont',2,'p_cont_ponto','anaSin.py',110),
+  ('cont -> MAIS cont','cont',2,'p_cont_sum','anaSin.py',115),
+  ('cont -> MENOS cont','cont',2,'p_cont_sub','anaSin.py',120),
+  ('cont -> MUL cont','cont',2,'p_cont_mul','anaSin.py',125),
+  ('cont -> DIV cont','cont',2,'p_cont_div','anaSin.py',130),
+  ('cont -> MOD cont','cont',2,'p_cont_mod','anaSin.py',135),
+  ('cont -> DUP cont','cont',2,'p_cont_dup','anaSin.py',140),
+  ('cont -> CHAR LETRA cont','cont',3,'p_cont_letra','anaSin.py',145),
+  ('cont -> SWAP cont','cont',2,'p_cont_swap','anaSin.py',150),
+  ('cont -> DROP cont','cont',2,'p_cont_drop','anaSin.py',155),
+  ('cont -> STRPRINT cont','cont',2,'p_cont_strprint','anaSin.py',160),
+  ('cont -> STRPRINT2 cont','cont',2,'p_cont_strprint2','anaSin.py',165),
+  ('cont -> COMMENT cont','cont',2,'p_cont_comment','anaSin.py',170),
+  ('cont -> ENDCOMMENT cont','cont',2,'p_cont_endcomment','anaSin.py',175),
+  ('cont -> ID cont','cont',2,'p_cont_func','anaSin.py',180),
+  ('cont -> empty','cont',1,'p_cont_empty','anaSin.py',185),
+  ('empty -> <empty>','empty',0,'p_empty','anaSin.py',191),
 ]

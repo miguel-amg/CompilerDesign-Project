@@ -5,6 +5,13 @@
 # Pedro Andrade Carneiro, a100652
 # ----------------------------------------------------
 
+###########################
+# PARA RESOLVER
+# O : NAO PODE ESTAR COLADO A NADA~
+# + NAO PODE TAR COLADO A NADA
+
+
+
 # Imports
 import ply.lex as lex
 import re
@@ -36,13 +43,15 @@ tokens = (
     "DIV",    # / - divisão
     "PONTO",  # . - print do valor no topo da stack
     "COLON",  # : - inicio de uma função
-    "SEMICOLON", # ; - fim de função
-    "NUM",       # 123 - Numero
-    "ID",        # abc123 - Usado nas funções como nome
-    "STRPRINT",  # ." txttxtxtxt txtxt" da print ao texto no interior
-    "STRPRINT2", # .( txttxtxtxt txtxt) da print ao texto no interior mas transforma espaços consecutivos em um só espaço
-    "COMMENT",   # ( txtxt txtxt) é um comentario
-    "LETRA"      # Representa uma letra
+    "SEMICOLON",  # ; - fim de função
+    "NUM",        # 123 - Numero
+    "ID",         # abc123 - Usado nas funções como nome
+    "STRPRINT",   # ." txttxtxtxt txtxt" da print ao texto no interior
+    "STRPRINT2",  # .( txttxtxtxt txtxt) da print ao texto no interior mas transforma espaços consecutivos em um só espaço
+    "COMMENT",    # ( txtxt txtxt) é um comentario
+    "ENDCOMMENT", # \ txtxtx é um comentario de linha
+    "LETRA"       # Representa uma letra
+    # TALVEZ ADICIONAR .( TXTXTX MOSTRAR DURANTE COMPILAÇÃO)
 ) + tuple(reserved.values())
 
 ######################## REGEX ########################
@@ -52,10 +61,11 @@ t_MENOS = r"- " # Colado do lado esquerdo tem significado de negativo nos numero
 t_MUL = r'\*'
 t_DIV = r'/'
 t_PONTO = r'^\. |\s\.\s| \.$' # Print do valor no topo da stack (O ponto nunca esta colado a nada) (talvez com tab morra?)
-t_COLON = r':'      # Inicio de função
-t_SEMICOLON = r';'  # Fim de função
-t_COMMENT = r'\(\s[^\)]+\)' # Comentario
-t_LETRA = r'[A-Za-z]'  # Regex para reconhecer uma única letra
+t_COLON = r':'                # Inicio de função 
+t_SEMICOLON = r';'            # Fim de função
+t_COMMENT = r'\(\s[^\)]+\)'   # Comentario
+t_ENDCOMMENT = r'\\.+'        # Comentario de linha
+t_LETRA = r'[A-Za-z]'         # Regex para reconhecer uma única letra
 
 def t_NUM(t):
     r"(\+|-)?\d+"
@@ -84,7 +94,7 @@ def t_STRPRINT2(t):
 t_ignore = ' \n\t\r'
 
 def t_error(t):
-    print(f"Carácter ilegal {t.value[0]}")
+    print(f"TOKEN não reconhecido: {t.value[0]}")
     t.lexer.skip(1)
 
 ######################## FIM ########################

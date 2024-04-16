@@ -1,13 +1,13 @@
 //////////// Funções gerais //////////// 
-somar:
-	pushfp
+vmAdd:  // ADD
+	pushfp  
 	load -1
 	pushfp
 	load -2
 	add
 	return
 
-subtrair:
+vmSub: // SUB
 	pushfp
 	load -1
 	pushfp
@@ -15,17 +15,31 @@ subtrair:
 	sub
 	return
 
-dividir:
+vmMul: // DIV
 	pushfp
 	load -1
 	pushfp
 	load -2
-	sub
+	mul
 	return
 
-duplicar:
+vmDiv: // DIV
 	pushfp
 	load -1
+	pushfp
+	load -2
+	div
+	return
+
+vmDup: // DUP
+	pushfp
+	load -1
+	return
+
+vmPrintInt: // . (PARA INTS)
+	pushfp
+	load -1
+	writei
 	return
 
 ////////////////////////////////////////
