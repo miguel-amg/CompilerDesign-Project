@@ -18,11 +18,11 @@
 #
 #  cont -> NUM cont         // P3  - Inserir num na stack 
 #       | PONTO cont        // P4  - Print 
-#       | MAIS cont         // P5  - Soma +
-#       | MENOS cont        // P6  - Subtração -
-#       | MUL cont          // P7  - Multiplicação *
-#       | DIV cont          // P8  - Divisão /
-#       | MOD cont          // P9  - Resto da divisã inteira (mod)
+#       | MAIS cont         // P5  - Soma 
+#       | MENOS cont        // P6  - Subtração 
+#       | MUL cont          // P7  - Multiplicação 
+#       | DIV cont          // P8  - Divisão 
+#       | MOD cont          // P9  - Resto da divisã inteira
 #       | DUP cont          // P10 - Duplicar valor na stack
 #       | CHAR LETRA cont   // P11 - Inserir letra na stack (TALVEZ TENHA QUE METER NA STRING STACK????????????????????????)
 #       | SWAP cont         // P12 - Da swap aos dois ultimos elems 
@@ -30,9 +30,16 @@
 #       | STRPRINT cont     // P14 - Dá print a uma string
 #       | STRPRINT2 cont    // P15 - Dá print a uma string mas remove espaços consecutivos
 #       | COMMENT cont      // P16 - Comentario
-#       | ENDCOMMENT cont   // P16 - Comentario de linha
-#       | ID cont           // P17 - Chamar função
-#       | Empty             // P17 - Vazio
+#       | ENDCOMMENT cont   // P17 - Comentario de linha
+#       | ID cont           // P18 - Chamar função
+#       | NIP cont          // P19 - Remove o segundo item da stack
+#       | 2DROP cont        // P20 - Remove os dois elementos no topo da stack
+#       | ROT cont          // P21 - Coloca o terceiro item no topo
+#       | OVER cont         // P22 - Faz uma copia do segundo item e coloca no topo
+#       | 2DUP cont         // P20 - Duplica o par no topo da stack 
+#       | 2SWAP cont        // P20 - Troca os dois pares no topo da stack 
+#       | 2OVER cont        // P21 - Copiar o 2o par no topo da stack e colar no topo da stack
+#       | Empty             // P23 - Vazio
 
 #################################### SETUP ####################################
 # Imports
@@ -42,10 +49,10 @@ import sys
 import os
 
 # Variáveis hardcoded
-localResultado = "result"  # Pasta para os resultados
-ficheiroFuncoes   = "recursos/funcoes.txt"  # Ficheiro com a definição das funções para a vm
-debug = False # Modo debug ligado ou desligado
-funcs = {} # Armazenar o codigo das funções
+localResultado = "result"              # Pasta para os resultados
+ficheiroStart  = "recursos/start.txt"  # Ficheiro com o inicio do codigo
+debug = False                          # Modo debug ligado ou desligado
+funcs = {}                             # Armazenar o codigo das funções
 
 #################################### BOAS-VINDAS ####################################
 print(
@@ -72,17 +79,16 @@ def guardarResultado(local, resultado):
     except Exception as e:
         raise Exception("Erro ao guardar o resultado: {e}")
 
-# Carregar as funções para injetar no resultado final
-def carregarFuncoes(ficheiro):
+# Carrega o conteudo de um ficheiro
+def carregarTxt(ficheiro):
     try:
         f = open(ficheiro, 'r')
         conteudo = f.read()
         return conteudo
     except FileNotFoundError:
-        raise Exception("Ficheiro de funções não encontrado!")
+        raise Exception(f'Ficheiro {ficheiro} não encontrado!')
     except Exception as e:
-        raise Exception(f"Erro ao carregar funções: {e}")
-    
+        raise Exception(f"Erro ao carregar {ficheiro}: {e}")
     
 ####################################  CODIGO  ####################################
 #------------------------------- REGRAS PARA START -------------------------------
@@ -102,8 +108,12 @@ def p_start_func(p):
     if(p[2] in funcs):
         raise Exception(f"Compiling; Duplicate function!")
     
+    # Comentarios para identificar as funções
+    startComment = '// Função ' + p[2] + '\n'
+    endComment   = "// Fim função " + p[2] + "\n"
+
     # Armazenar o codigo da função
-    funcs[p[2]] = '// Inserida função ' + p[2] + '\n' + p[3] + "// Fim função " + p[2] # Armazenar o codigo da função
+    funcs[p[2]] = startComment + p[3] + endComment # Armazenar o codigo da função
     if(debug): print("P_start_cont, Função guardada")
     
 #------------------------------- REGRAS PARA CONT ------------------------------- 
@@ -185,8 +195,58 @@ def p_cont_endcomment(p):
 def p_cont_func(p):
     'cont : ID cont' 
     global funcs
-    p[0] = funcs[p[1]] 
+    p[0] = funcs[p[1]] + str(p[2])
     if(debug): print("P_cont_func")
+
+def p_cont_nip(p):
+    'cont : NIP cont' 
+    p[0] = "SWAP\nPOP 1\n" + str(p[2]) 
+    if(debug): print("P_cont_nip")
+
+def p_cont_2drop(p):
+    'cont : 2DROP cont' 
+    p[0] = "POP 2\n" + str(p[2]) 
+    if(debug): print("P_cont_2drop")
+
+# Explicação: Guardar os 3 valores no topo da stack na stack temporaria, inserir denovo trocado 
+# Resultado: O 3 item foi para o topo
+def p_cont_rot(p):
+    'cont : ROT cont'
+    vmCode = "STOREG 2 \nSTOREG 1 \nSTOREG 0 \nPUSHG 2 \nPUSHG 1 \nPUSHG 0 \n"
+    p[0] = vmCode + str(p[2]) 
+    if(debug): print("P_cont_rot")
+
+# Explicação: Armazenar o valor no topo, duplicar o 2 valor, inserir denovo o topo, trocar
+# Resultado: Foi duplicado o 2 valor do topo da stack e inserido no topo  
+def p_cont_over(p):
+    'cont : OVER cont'
+    vmCode = "STOREG 0 \nDUP 1 \nPUSHG 0 \nSWAP \n"
+    p[0] = vmCode + str(p[2]) 
+    if(debug): print("P_cont_over")
+
+# Explicação: Duplicar o elemento no topo e armazenar, duplicar o 2 elemento e armazenar, inserir os pares por ordem
+# Resultado: O par no topo da stack foi duplicado
+def p_cont_2dup(p):
+    'cont : 2DUP cont' 
+    vmCode = "DUP 1 \nSTOREG 0 \nSTOREG 1 \nDUP 1 \nSTOREG 2 \nSTOREG 3 \nPUSHG 2 \nPUSHG 0 \nPUSHG 3 \nPUSHG 1 \n"
+    p[0] = vmCode + str(p[2]) 
+    if(debug): print("P_cont_2dup")
+
+# Explicação: Armazenar os dois pares no topo da stack mas inserir com estes trocados, inserir de volta stack  
+# Resultado: O 2 pares no topo da stack foram trocados
+def p_cont_2swap(p):
+    'cont : 2SWAP cont' 
+    vmCode = "STOREG 1 \nSTOREG 0 \nSTOREG 3 \nSTOREG 2 \nPUSHG 0 \nPUSHG 1 \nPUSHG 2 \nPUSHG 3 \n"
+    p[0] = vmCode + str(p[2]) 
+    if(debug): print("P_cont_2swap")
+
+# Explicação: Armazenar os dois pares, duplicar os valores do 2 par, inserir tudo devolta na stack  
+# Resultado: O 2o par foi copiado e inserido no topo da stack
+def p_cont_2over(p):
+    'cont : 2OVER cont' 
+    vmCode = "STOREG 1 \nSTOREG 0 \ndup 1 \nSTOREG 3 \nSTOREG 5 \ndup 1 \nSTOREG 2 \nSTOREG 4 \nPUSHG 2 \nPUSHG 3 \nPUSHG 0 \nPUSHG 1 \nPUSHG 4 \nPUSHG 5 \n"
+    p[0] = vmCode + str(p[2]) 
+    if(debug): print("P_cont_2over")
 
 def p_cont_empty(p):
     'cont : empty'
@@ -211,11 +271,8 @@ def p_error(p):
 # Construir o parser
 parser = yacc.yacc()
 
-# Carregar as funções para inserir no final
-funcoes = carregarFuncoes(ficheiroFuncoes)
-
 # Iterar cada linha do input
-final = "start\n"
+final = carregarTxt(ficheiroStart) + "start\n"
 for linha in sys.stdin:
     if(debug): print("DEBUG:")
     result = parser.parse(linha)
@@ -225,7 +282,6 @@ for linha in sys.stdin:
     print()
     final += result
 final += "stop\n"
-# (CODIGO ANTIGO FUNCOES PREDEFINIDAS) final += "stop\n" + funcoes # Colocar no final do resultado as funções e stop 
 
 # Obter resultado final e trata-lo
 print("RESULTADO FINAL:")

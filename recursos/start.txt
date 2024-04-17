@@ -1,0 +1,7 @@
+// Variáveis auxiliares (sistema)
+pushi 0
+pushi 0
+pushi 0 
+pushi 0 
+pushi 0 
+pushi 0 

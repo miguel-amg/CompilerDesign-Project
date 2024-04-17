@@ -1,0 +1,17 @@
+# Carregar as funções para injetar no resultado final
+#def carregarFuncoes(ficheiro):
+#    try:
+#        f = open(ficheiro, 'r')
+#        conteudo = f.read()
+#        return conteudo
+#    except FileNotFoundError:
+#        raise Exception("Ficheiro de funções não encontrado!")
+#    except Exception as e:
+#        raise Exception(f"Erro ao carregar funções: {e}")
+
+
+# Carregar as funções para inserir no final
+# funcoes = carregarFuncoes(ficheiroFuncoes)
+
+
+# (CODIGO ANTIGO FUNCOES PREDEFINIDAS) final += "stop\n" + funcoes # Colocar no final do resultado as funções e stop 
