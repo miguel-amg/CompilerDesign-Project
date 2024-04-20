@@ -43,7 +43,10 @@ reserved = {
    'NEGATE' : 'NEGATE', # negate | Nega o numero no topo da stack.
    'MIN'    : 'MIN',    # min    | Retorna o menor dos dois valores no topo da stack.
    'MAX'    : 'MAX',    # max    | Retorna o maior dos dois valores no topo da stack.
-   'ABS'    : 'ABS'     # abs    | Retorna o absoluto do valor no topo da stack.
+   'ABS'    : 'ABS',    # abs    | Retorna o absoluto do valor no topo da stack.
+   'IF'     : 'IF',
+   'ELSE'   : 'ELSE',
+   'THEN'   : 'THEN'
 }
 
 # Todos os tokens
@@ -85,7 +88,7 @@ t_MAIS  = r'(?<!\S)\+(?!\S)'
 t_MENOS = r'(?<!\S)-(?!\S)'  # O - nao pode estar colado a nada para ter o significado de sub
 t_MUL   = r'(?<!\S)\*(?!\S)'
 t_DIV   = r'(?<!\S)/(?!\S)'
-t_PONTO = r'(?<!\S).(?!\S)'  # Print do valor no topo da stack (O ponto nunca esta colado a nada) (talvez com tab morra?)
+t_PONTO = r'(?<!\S)\.(?!\S)'  # Print do valor no topo da stack (O ponto nunca esta colado a nada) (talvez com tab morra?)
 t_COLON = r'(?<!\S):(?!\S)'  # Inicio de função 
 t_SEMICOLON  = r'(?<!\S);(?!\S)'             # Fim de função
 t_COMMENT    = r'(?<!\S)\(\s[^\)]+\)(?!\S)'  # Comentario

@@ -1,4 +1,4 @@
-: ola ." ola como tens andado";
+: ola ." ola como tens andado" ;
 ola
 : func1 + - ;
 : func2 func1 . ;

@@ -7,14 +7,21 @@ pushi 0
 pushi 0 
 
 start 
-PUSHI 100
-// Função ABS (sistema) 
-PUSHA vmAbs 
-CALL 
-SWAP 
-POP 1 
-// Fim Função ABS (sistema) 
+// Função ola
+PUSHS "ola como tens andado" 
+WRITES 
+// Fim função ola
+PUSHI 1
+PUSHI 2
+PUSHI 3
+PUSHI 4
+// Função func2
+// Função func1
+ADD
+SUB
+// Fim função func1
 WRITEI
+// Fim função func2
 stop
 
 //---------------- Funções do sistema ----------------//

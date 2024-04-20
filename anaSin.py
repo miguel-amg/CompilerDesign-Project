@@ -11,6 +11,9 @@
 #
 # Alternativamente poderá ser inserido um ficheiro atráves do comando:
 # python3 anaSin.py < testFile.txt 
+#
+# Pode-se entrar no modo debug iniciando o programa com:
+# python3 anaSin.py debug
 
 #################################### GRAMATICA ####################################
 #  start -> cont                    // P1 - Conteudo
@@ -64,13 +67,17 @@ from anaLex import tokens
 import ply.yacc as yacc
 import sys
 import os
+import re
 
-# Variáveis hardcoded
+# Variáveis 
+global debug
+global funcoesProtegidas # Cria uma lista com todas as funções existentes no ficheiroFuncoes 
+
 localResultado  = "result"                # Pasta para os resultados
 ficheiroStart   = "recursos/start.txt"    # Ficheiro com o inicio do codigo
 ficheiroFuncoes = "recursos/funcoes.txt"  # Ficheiro as funções utilizadas na vm
-debug = False                             # Modo debug ligado ou desligado
-funcs = {}                                # Armazenar o codigo das funções
+debug = False   # Modo debug ativo ou inativo (Inativo por predefinição)
+funcs = {}      # Armazenar o codigo das funções
 
 #################################### BOAS-VINDAS ####################################
 print(
@@ -108,9 +115,26 @@ def carregarTxt(ficheiro):
     except Exception as e:
         raise Exception(f"Erro ao carregar {ficheiro}: {e}")
 
-# Carrega as funcoes protegidas 
-#def carregarFuncProtegidas(ficheiro):
-    
+# Carrega os nomes de todas as funções do sistema para dentro de um conjunto
+def carregarFuncProtegidas(ficheiro):
+    funcStart = r'([A-Za-z_][A-Za-z_0-9]+):'
+    with open(ficheiro, 'r') as file:
+        texto = file.read()
+        matches = re.findall(funcStart, texto)
+        return set(matches)
+
+# Trata dos argumentos passados para o programa
+def tratarArgumentos(argumentos):
+    global debug
+
+    # Verificar a quantidade de argumentos recebidos
+    if len(argumentos) == 2:
+        # Verificar o argumento recebido
+        if argumentos[1].lower() == 'debug': debug = True
+        else: raise Exception("Argumento com valor desconhecido!")    
+    elif len(argumentos) > 2:
+        raise Exception("Demasiados argumentos!")
+
 ####################################  CODIGO  ####################################
 #------------------------------- REGRAS PARA START -------------------------------
 def p_start_cont(p):
@@ -123,12 +147,16 @@ def p_start_func(p):
     'start : COLON ID cont SEMICOLON'
     p[0] = ''
 
-    global funcs
+    global funcs, funcoesProtegidas
 
     # Lançar erro caso já esteja definida esta função
     if(p[2] in funcs):
-        raise Exception(f"Compiling; Duplicate function!")
+        raise Exception(f"Compilacao; Funcao duplicada!")
     
+    # Impedir que o utilizador use função com nome de função do sistema
+    if(p[2] in funcoesProtegidas): 
+        raise Exception(f"Compilacao; Nome utilizado por funcao do sistema! \nFunções utilizadas pelo sistema: {funcoesProtegidas}")
+
     # Comentarios para identificar as funções
     startComment = '// Função ' + p[2] + '\n'
     endComment   = "// Fim função " + p[2] + "\n"
@@ -392,13 +420,23 @@ def p_error(p):
         print("AnaSin: Erro, fim inesperado do input")
 
 #################################### PARSER ####################################
+# Obter argumentos do programa e trata-los
+argumentos = sys.argv
+tratarArgumentos(argumentos)
+
+# Inicio
+if(debug): print("MODO DEBUG ATIVO:")
+
+# Proteger o utilizador de criar funçoes com o mesmo nome das do sistema
+funcoesProtegidas = carregarFuncProtegidas(ficheiroFuncoes)
+if(debug): print("Funcoes protegidas: " + str(funcoesProtegidas)) 
+    
 # Construir o parser
 parser = yacc.yacc()
 
 # Iterar cada linha do input
 final = carregarTxt(ficheiroStart) + "\nstart \n"
 for linha in sys.stdin:
-    if(debug): print("DEBUG:")
     result = parser.parse(linha)
     final += result
 final += "stop\n\n" + carregarTxt(ficheiroFuncoes)
