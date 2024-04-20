@@ -5,13 +5,6 @@
 # Pedro Andrade Carneiro, a100652
 # ----------------------------------------------------
 
-###########################
-# PARA RESOLVER
-# O : NAO PODE ESTAR COLADO A NADA
-# + NAO PODE TAR COLADO A NADA
-# tem de funcionar dar multilinha as funções 
-###########################
-
 # Imports
 import ply.lex as lex
 import re
@@ -89,7 +82,7 @@ t_MENOS = r'(?<!\S)-(?!\S)'  # O - nao pode estar colado a nada para ter o signi
 t_MUL   = r'(?<!\S)\*(?!\S)'
 t_DIV   = r'(?<!\S)/(?!\S)'
 t_PONTO = r'(?<!\S)\.(?!\S)'  # Print do valor no topo da stack (O ponto nunca esta colado a nada) (talvez com tab morra?)
-t_COLON = r'(?<!\S):(?!\S)'  # Inicio de função 
+t_COLON = r'(?<!\S)\:(?!\S)'  # Inicio de função 
 t_SEMICOLON  = r'(?<!\S);(?!\S)'             # Fim de função
 t_COMMENT    = r'(?<!\S)\(\s[^\)]+\)(?!\S)'  # Comentario
 t_ENDCOMMENT = r'\\.+'                       # Comentario de linha

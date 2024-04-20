@@ -131,9 +131,9 @@ def tratarArgumentos(argumentos):
     if len(argumentos) == 2:
         # Verificar o argumento recebido
         if argumentos[1].lower() == 'debug': debug = True
-        else: raise Exception("Argumento com valor desconhecido!")    
+        else: raise Exception("Programa: Argumento com valor desconhecido!")    
     elif len(argumentos) > 2:
-        raise Exception("Demasiados argumentos!")
+        raise Exception("Programa: Demasiados argumentos!")
 
 ####################################  CODIGO  ####################################
 #------------------------------- REGRAS PARA START -------------------------------
@@ -151,11 +151,11 @@ def p_start_func(p):
 
     # Lançar erro caso já esteja definida esta função
     if(p[2] in funcs):
-        raise Exception(f"Compilacao; Funcao duplicada!")
+        raise Exception(f"Erro de compilacao, funcao \"{p[2]}\" duplicada!")
     
     # Impedir que o utilizador use função com nome de função do sistema
     if(p[2] in funcoesProtegidas): 
-        raise Exception(f"Compilacao; Nome utilizado por funcao do sistema! \nFunções utilizadas pelo sistema: {funcoesProtegidas}")
+        raise Exception(f"Erro de compilacao, nome \"{p[2]}\" utilizado por funcao do sistema! \nFunções utilizadas pelo sistema: {funcoesProtegidas}")
 
     # Comentarios para identificar as funções
     startComment = '// Função ' + p[2] + '\n'
@@ -257,7 +257,14 @@ def p_cont_endcomment(p):
 def p_cont_func(p):
     'cont : ID cont' 
     global funcs
-    p[0] = funcs[p[1]] + str(p[2])
+
+    # Verificar se a função foi definida antes de ser chamada
+    if p[1] in funcs:
+        p[0] = funcs[p[1]] + str(p[2])
+    else:
+        # Se não estiver definida, gere uma mensagem de erro
+        raise Exception(f"Erro de compilacao, identificador de função desconhecido \"{p[1]}\".")
+    
     if(debug): print("P_cont_func")
 
 def p_cont_nip(p):
@@ -433,6 +440,7 @@ if(debug): print("Funcoes protegidas: " + str(funcoesProtegidas))
     
 # Construir o parser
 parser = yacc.yacc()
+
 
 # Iterar cada linha do input
 final = carregarTxt(ficheiroStart) + "\nstart \n"
