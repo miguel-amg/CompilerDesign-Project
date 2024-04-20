@@ -7,10 +7,65 @@ pushi 0
 pushi 0 
 
 start 
-PUSHI 2
-PUSHI 2
-EQUAL 
-PUSHI 0 
-EQUAL 
+PUSHI 100
+// Função ABS (sistema) 
+PUSHA vmAbs 
+CALL 
+SWAP 
+POP 1 
+// Fim Função ABS (sistema) 
 WRITEI
 stop
+
+//---------------- Funções do sistema ----------------//
+vmMinElse: // Função Continuação da vmMin
+	pushfp
+	load -1
+	return
+
+vmMin: // Retorna o menor valor (MIN do forth)
+	pushfp
+	load -2
+	pushfp
+	load -1
+	inf
+	jz vmMinElse
+	pushfp
+	load -2
+	return
+
+//---------------------------------------------------//
+vmMaxElse: // Função Continuação da vmMax
+	pushfp
+	load -1
+	return
+
+vmMax: // Retorna o maior valor (MAX do forth)
+	pushfp
+	load -2
+	pushfp
+	load -1
+	sup
+	jz vmMaxElse
+	pushfp
+	load -2
+	return
+//---------------------------------------------------//
+vmAbsElse: // Função continuação do vmAbs (Valor <0)
+	pushfp
+	load -1	
+	pushi -1
+	mul
+	return
+
+vmAbs: // Retorna absoluto do 1 elem (ABS do forth)
+	pushfp
+	load -1
+	pushi 0
+	sup
+	jz vmAbsElse // O valor é <0
+	pushfp
+	load -1
+	return
+
+//---------------------------------------------------//

@@ -39,7 +39,11 @@ reserved = {
    'KEY'    : 'KEY',    # key    | Input de um caracter/tecla.
    'SPACE'  : 'SPACE',  # space  | Dá output a um espaço.
    'SPACES' : 'SPACES', # spaces | Dá output a uma determinada quantidade de espaços (Exige um numero antes que é verificado por gramatica).
-   'CR'     : 'CR'      # cr     | Dá output a um new-line (\n).
+   'CR'     : 'CR',     # cr     | Dá output a um new-line (\n).
+   'NEGATE' : 'NEGATE', # negate | Nega o numero no topo da stack.
+   'MIN'    : 'MIN',    # min    | Retorna o menor dos dois valores no topo da stack.
+   'MAX'    : 'MAX',    # max    | Retorna o maior dos dois valores no topo da stack.
+   'ABS'    : 'ABS'     # abs    | Retorna o absoluto do valor no topo da stack.
 }
 
 # Todos os tokens
@@ -63,6 +67,7 @@ tokens = (
     "ENDCOMMENT", # \ txtxtx             | É um comentario de linha.
     "LETRA",      # A                    | Representa uma letra.
     "ZEROEQ",     # 0=                   | Retorna verdade se o valor no topo da stack for igual a zero.
+    "ZERONEQ",    # 0<>                  | Retorna verdade se o valor no topo da stack for diferente de zero.
     "ZEROMENOR",  # 0<                   | Retorna verdade se o valor no topo da stack for menor que zero.
     "ZEROMAIOR",  # 0>                   | Retorna verdade se o valor no topo da stack for maior que zero.
     "EQ",         # =                    | Retorna verdade se os dois valores no topo da stack forem iguais.
@@ -87,16 +92,17 @@ t_COMMENT    = r'(?<!\S)\(\s[^\)]+\)(?!\S)'  # Comentario
 t_ENDCOMMENT = r'\\.+'                       # Comentario de linha
 t_LETRA      = r'(?<!\S)[A-Za-z](?!\S)'      # Regex para reconhecer uma única letra
 t_ZEROEQ     = r'(?<!\S)0=(?!\S)'
+t_ZERONEQ    = r'(?<!\S)0<>(?!\S)'
 t_ZEROMENOR  = r'(?<!\S)0<(?!\S)'
 t_ZEROMAIOR  = r'(?<!\S)0>(?!\S)'
-t_EQ     = r'(?<!\S)=(?!\S)'
-t_NEQ    = r'(?<!\S)<>(?!\S)'
-t_MENOR  = r'(?<!\S)<(?!\S)'
-t_MAIOR  = r'(?<!\S)>(?!\S)'
-t_2OVER  = r'(?<!\S)(?i)2OVER(?!\S)'
-t_2SWAP  = r'(?<!\S)(?i)2SWAP(?!\S)'
-t_2DUP   = r'(?<!\S)(?i)2DUP(?!\S)'
-t_2DROP  = r'(?<!\S)(?i)2DROP(?!\S)'
+t_EQ    = r'(?<!\S)=(?!\S)'
+t_NEQ   = r'(?<!\S)<>(?!\S)'
+t_MENOR = r'(?<!\S)<(?!\S)'
+t_MAIOR = r'(?<!\S)>(?!\S)'
+t_2OVER = r'(?<!\S)(?i)2OVER(?!\S)'
+t_2SWAP = r'(?<!\S)(?i)2SWAP(?!\S)'
+t_2DUP  = r'(?<!\S)(?i)2DUP(?!\S)'
+t_2DROP = r'(?<!\S)(?i)2DROP(?!\S)'
 
 # Regra para os numeros
 def t_NUM(t):

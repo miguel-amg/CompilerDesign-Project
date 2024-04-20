@@ -50,8 +50,13 @@
 #       | NEQ cont          // P33 - Retorna verdade se os dois valores no topo da stack forem diferentes.
 #       | MENOR cont        // P34 - Retorna verdade se o 2 valor no topo da stack for menor que o primeiro. Infixo: 10 < 2, Posfixo: 10 2 <.
 #       | MAIOR cont        // P35 - Retorna verdade se o 2 valor no topo da stack for maior que o primeiro. Infixo: 10 > 2, Posfixo: 10 2 >.
-#       | ZEROEQ cont       // P36 - Retorna verdade se o valor no topo da stack for igual a zero.
-#       | Empty             // P37 - Vazio
+#       | ZEROEQ cont       // P36 - Retorna verdade se o valor no topo da stack for igual de zero.
+#       | ZERONEQ cont      // P37 - Retorna verdade se o valor no topo da stack for diferente de zero.
+#       | NEGATE cont       // P38 - Nega o numero no topo da stack.
+#       | MIN cont          // P38 - Retorna o menor dos dois valores no topo da stack.
+#       | MAX cont          // P38 - Retorna o maior dos dois valores no topo da stack.
+#       | ABS cont          // P39 - Retorna o absoluto do valor no topo da stack.
+#       | Empty             // P38 - Vazio
 
 #################################### SETUP ####################################
 # Imports
@@ -61,10 +66,11 @@ import sys
 import os
 
 # Variáveis hardcoded
-localResultado = "result"              # Pasta para os resultados
-ficheiroStart  = "recursos/start.txt"  # Ficheiro com o inicio do codigo
-debug = False                          # Modo debug ligado ou desligado
-funcs = {}                             # Armazenar o codigo das funções
+localResultado  = "result"                # Pasta para os resultados
+ficheiroStart   = "recursos/start.txt"    # Ficheiro com o inicio do codigo
+ficheiroFuncoes = "recursos/funcoes.txt"  # Ficheiro as funções utilizadas na vm
+debug = False                             # Modo debug ligado ou desligado
+funcs = {}                                # Armazenar o codigo das funções
 
 #################################### BOAS-VINDAS ####################################
 print(
@@ -75,7 +81,7 @@ Compilador de Forth
 -------------------------------------""")
 
 #################################### FUNÇÕES AUXILIARES ####################################
-# Guardar o resultaod final obtido
+# Guardar o resultado final obtido
 def guardarResultado(local, resultado):
     try:
         # Verificar se existe a pasta
@@ -101,6 +107,9 @@ def carregarTxt(ficheiro):
         raise Exception(f'Ficheiro {ficheiro} não encontrado!')
     except Exception as e:
         raise Exception(f"Erro ao carregar {ficheiro}: {e}")
+
+# Carrega as funcoes protegidas 
+#def carregarFuncProtegidas(ficheiro):
     
 ####################################  CODIGO  ####################################
 #------------------------------- REGRAS PARA START -------------------------------
@@ -333,6 +342,37 @@ def p_cont_zeromenor(p):
     p[0] = "PUSHI 0 \nINF \n" + str(p[2]) 
     if(debug): print("P_cont_zeromenor")
 
+def p_cont_zeroneq(p):
+    'cont : ZERONEQ cont' 
+    p[0] = "NOT \nPUSHI 0 \nEQUAL \n" + str(p[2]) 
+    if(debug): print("P_cont_zeroneq")
+
+def p_cont_negate(p):
+    'cont : NEGATE cont' 
+    p[0] = "PUSHI -1 \nMUL \n" + str(p[2]) 
+    if(debug): print("P_cont_negate")
+
+# Explicação: Irá utilizar a função definida no ficheiro de funções vmMin. Remove os 2 valores iniciais e deixa so o resultado.
+# Resultado: É inserido o menor valor de entre os 2 no topo da stack.
+def p_cont_min(p):
+    'cont : MIN cont' 
+    p[0] = "// Função MIN (sistema) \nPUSHA vmMin \nCALL  \nSWAP \nPOP 1 \nSWAP \nPOP 1 \n// Fim Função MIN (sistema) \n" + str(p[2]) 
+    if(debug): print("P_cont_min")
+
+# Explicação: Irá utilizar a função definida no ficheiro de funções vmMax. Remove os 2 valores iniciais e deixa so o resultado.
+# Resultado: É inserido o maior valor de entre os 2 no topo da stack.
+def p_cont_max(p):
+    'cont : MAX cont' 
+    p[0] = "// Função MAX (sistema) \nPUSHA vmMax \nCALL  \nSWAP \nPOP 1 \nSWAP \nPOP 1 \n// Fim Função MAX (sistema) \n" + str(p[2]) 
+    if(debug): print("P_cont_max")
+
+# Explicação: Irá utilizar a função definida no ficheiro de funções vmAbs. Remove o valor inicial e deixa so o resultado.
+# Resultado: É inserido o absoluto do valor no topo da stack.
+def p_cont_abs(p):
+    'cont : ABS cont' 
+    p[0] = "// Função ABS (sistema) \nPUSHA vmAbs \nCALL \nSWAP \nPOP 1 \n// Fim Função ABS (sistema) \n" + str(p[2]) 
+    if(debug): print("P_cont_abs")
+
 def p_cont_empty(p):
     'cont : empty'
     p[0] = ''
@@ -361,7 +401,7 @@ for linha in sys.stdin:
     if(debug): print("DEBUG:")
     result = parser.parse(linha)
     final += result
-final += "stop\n"
+final += "stop\n\n" + carregarTxt(ficheiroFuncoes)
 
 # Obter resultado final e trata-lo
 print()
