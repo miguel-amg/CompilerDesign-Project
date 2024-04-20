@@ -12,8 +12,6 @@
 # tem de funcionar dar multilinha as funções 
 ###########################
 
-
-
 # Imports
 import ply.lex as lex
 import re
@@ -25,87 +23,90 @@ def removeEspacos(string):
     return re.sub(regex, " ", string)
 
 ######################## TOKENS ########################
-# Tokens reservados
+# Tokens reservados (Utilizado pelo ID para evitar conflitos)
 reserved = {
-   'MOD'  : 'MOD',   # mod  | resto da divisao inteira 
-   'EMIT' : 'EMIT',  # emit | dá print a um char (passa de int para char)
-   'CHAR' : 'CHAR',  # char | declarar um caracter
-   'DUP'  : 'DUP',   # dup  | duplicar valor na stack
-   'SWAP' : 'SWAP',  # swap | trocar os dois ultimos valores na stack
-   'DROP' : 'DROP',  # drop | retira o primeiro elem da stack
-   'OVER' : 'OVER',  # over | faz uma copia do segundo item e coloca no topo
-   'ROT'  : 'ROT',   # rot  | coloca o terceiro item no topo
-   'NIP'  : 'NIP'    # nip  | remove o segundo item da stack
+   'MOD'    : 'MOD',    # mod    | Resto da divisao inteira .
+   'EMIT'   : 'EMIT',   # emit   | Dá print ao caracter na primeira posição da stack, o caracter é representado em ascii. 
+   'CHAR'   : 'CHAR',   # char   | Declarar um caracter.
+   'DUP'    : 'DUP',    # dup    | Duplicar valor na stack.
+   'SWAP'   : 'SWAP',   # swap   | Trocar os dois ultimos valores na stack.
+   'DROP'   : 'DROP',   # drop   | Retira o primeiro elem da stack.
+   'OVER'   : 'OVER',   # over   | Faz uma copia do segundo item e coloca no topo.
+   'ROT'    : 'ROT',    # rot    | Coloca o terceiro item no topo.
+   'NIP'    : 'NIP',    # nip    | Remove o segundo item da stack.
+   'TUCK'   : 'TUCK',   # tuck   | Insere uma copia do primeiro elemento debaixo do segundo.
+   #'PICK'   : 'PICK',  # pick   | Faz uma copia do n-esimo elemento da stack (Exige um numero antes que é verificado por gramatica).
+   'KEY'    : 'KEY',    # key    | Input de um caracter/tecla.
+   'SPACE'  : 'SPACE',  # space  | Dá output a um espaço.
+   'SPACES' : 'SPACES', # spaces | Dá output a uma determinada quantidade de espaços (Exige um numero antes que é verificado por gramatica).
+   'CR'     : 'CR'      # cr     | Dá output a um new-line (\n).
 }
 
 # Todos os tokens
 tokens = (
-    "MAIS",       # +                    | Adição
-    "MENOS",      # -                    | Subtração
-    "MUL",        # *                    | Multiplicação
-    "DIV",        # /                    | Divisão
-    "PONTO",      # .                    | Print do valor no topo da stack
-    "COLON",      # :                    | Inicio de uma função
-    "SEMICOLON",  # ;                    | Fim de função
-    "2DROP",      # 2DROP                | Remove os dois elementos no topo da stack
-    "2DUP",       # 2DUP                 | Duplicar o par no topo da stack
-    "2SWAP",      # 2SWAP                | Troca os dois pares no topo da stack
-    "2OVER",      # 2OVER                | Copiar o 2o par apartir do topo da stack e cola no topo da mesma
-    "NUM",        # 123                  | Numero
-    "ID",         # abc123               | Usado nas funções como nome
-    "STRPRINT",   # ." txttxtxtxt txtxt" | Realiza print ao texto entre aspas
-    "STRPRINT2",  # .( txttxtxtxt txtxt) | Realiza print ao texto entre parentesis e transforma espaços consecutivos em um só espaço
-    "COMMENT",    # ( txtxt txtxt)       | É um comentario
-    "ENDCOMMENT", # \ txtxtx             | É um comentario de linha
-    "LETRA"       # A                    | Representa uma letra
-    # TALVEZ ADICIONAR .( TXTXTX MOSTRAR DURANTE COMPILAÇÃO)
+    "MAIS",       # +                    | Adição.
+    "MENOS",      # -                    | Subtração.
+    "MUL",        # *                    | Multiplicação.
+    "DIV",        # /                    | Divisão.
+    "PONTO",      # .                    | Print do valor no topo da stack.
+    "COLON",      # :                    | Inicio de uma função.
+    "SEMICOLON",  # ;                    | Fim de função.
+    "2DROP",      # 2DROP                | Remove os dois elementos no topo da stack.
+    "2DUP",       # 2DUP                 | Duplicar o par no topo da stack.
+    "2SWAP",      # 2SWAP                | Troca os dois pares no topo da stack.
+    "2OVER",      # 2OVER                | Copiar o 2o par apartir do topo da stack e cola no topo da mesma.
+    "NUM",        # 123                  | Numero.
+    "ID",         # abc123               | Usado nas funções como nome.
+    "STRPRINT",   # ." txttxtxtxt txtxt" | Realiza print ao texto entre aspas.
+    "STRPRINT2",  # .( txttxtxtxt txtxt) | Realiza print ao texto entre parentesis e transforma espaços consecutivos em um só espaço.
+    "COMMENT",    # ( txtxt txtxt)       | É um comentario.
+    "ENDCOMMENT", # \ txtxtx             | É um comentario de linha.
+    "LETRA",      # A                    | Representa uma letra.
+    "ZEROEQ",     # 0=                   | Retorna verdade se o valor no topo da stack for igual a zero.
+    "ZEROMENOR",  # 0<                   | Retorna verdade se o valor no topo da stack for menor que zero.
+    "ZEROMAIOR",  # 0>                   | Retorna verdade se o valor no topo da stack for maior que zero.
+    "EQ",         # =                    | Retorna verdade se os dois valores no topo da stack forem iguais.
+    "NEQ",        # <>                   | Retorna verdade se os dois valores no topo da stack forem diferentes.
+    "MENOR",      # <                    | Retorna verdade se o 2 valor no topo da stack for menor que o primeiro. Infixo: 10 < 2, Posfixo: 10 2 <.
+    "MAIOR"       # >                    | Retorna verdade se o 2 valor no topo da stack for maior que o primeiro. Infixo: 10 > 2, Posfixo: 10 2 >.
+    # ADICIONAR .( TXTXTX MOSTRAR DURANTE COMPILAÇÃO)
+    # ADICIONAR /MOD
+    # ADICIONAR ABS
 ) + tuple(reserved.values())
 
 ######################## REGEX ########################
-# Tokens
-t_MAIS = r'\+'
-t_MENOS = r"- " # Colado do lado esquerdo tem significado de negativo nos numeros
-t_MUL = r'\*'
-t_DIV = r'/'
-t_PONTO = r'^\. |\s\.\s| \.$' # Print do valor no topo da stack (O ponto nunca esta colado a nada) (talvez com tab morra?)
-t_COLON = r':'                # Inicio de função 
-t_SEMICOLON = r';'            # Fim de função
-t_COMMENT = r'\(\s[^\)]+\)'   # Comentario
-t_ENDCOMMENT = r'\\.+'        # Comentario de linha
-t_LETRA = r'[A-Za-z]'         # Regex para reconhecer uma única letra
+# NOTA: Formula para forçar TXT a estar separado de outros tokens: (?<!\S)TXT(?!\S)  
+t_MAIS  = r'(?<!\S)\+(?!\S)'
+t_MENOS = r'(?<!\S)-(?!\S)'  # O - nao pode estar colado a nada para ter o significado de sub
+t_MUL   = r'(?<!\S)\*(?!\S)'
+t_DIV   = r'(?<!\S)/(?!\S)'
+t_PONTO = r'(?<!\S).(?!\S)'  # Print do valor no topo da stack (O ponto nunca esta colado a nada) (talvez com tab morra?)
+t_COLON = r'(?<!\S):(?!\S)'  # Inicio de função 
+t_SEMICOLON  = r'(?<!\S);(?!\S)'             # Fim de função
+t_COMMENT    = r'(?<!\S)\(\s[^\)]+\)(?!\S)'  # Comentario
+t_ENDCOMMENT = r'\\.+'                       # Comentario de linha
+t_LETRA      = r'(?<!\S)[A-Za-z](?!\S)'      # Regex para reconhecer uma única letra
+t_ZEROEQ     = r'(?<!\S)0=(?!\S)'
+t_ZEROMENOR  = r'(?<!\S)0<(?!\S)'
+t_ZEROMAIOR  = r'(?<!\S)0>(?!\S)'
+t_EQ     = r'(?<!\S)=(?!\S)'
+t_NEQ    = r'(?<!\S)<>(?!\S)'
+t_MENOR  = r'(?<!\S)<(?!\S)'
+t_MAIOR  = r'(?<!\S)>(?!\S)'
+t_2OVER  = r'(?<!\S)(?i)2OVER(?!\S)'
+t_2SWAP  = r'(?<!\S)(?i)2SWAP(?!\S)'
+t_2DUP   = r'(?<!\S)(?i)2DUP(?!\S)'
+t_2DROP  = r'(?<!\S)(?i)2DROP(?!\S)'
 
-# Colocado como função para ser verificado primeiro que o id e num
-# Remover 2 elementos do topo da stack
-def t_2DROP(t):
-    r'(?i)2DROP'
-    return t
-
-# Colocado como função para ser verificado primeiro que o id e num
-# Duplicar o par no topo da stack
-def t_2DUP(t):
-    r'(?i)2DUP'  
-    return t
-
-# Colocado como função para ser verificado primeiro que o id e num
-# Trocar os dois pares no topo da stack
-def t_2SWAP(t):
-    r'(?i)2SWAP' 
-    return t
-
-# Colocado como função para ser verificado primeiro que o id e num
-# Copiar o 2o par apartir do topo da stack e cola no topo da mesma
-def t_2OVER(t):
-    r'(?i)2OVER' 
-    return t
-
+# Regra para os numeros
 def t_NUM(t):
-    r"(\+|-)?\d+"
+    r"(?<!\S)(\+|-)?\d+(?!\S)"
     t.value = int(t.value)
     return t
 
 # Nome de função
 def t_ID(t):
-    r'[A-Za-z_][A-Za-z_0-9]+'
+    r'(?<!\S)[A-Za-z_][A-Za-z_0-9]+(?!\S)'
     t.type = reserved.get(t.value.upper(),'ID') # Verificar se leu uma palavra reservada sem querer, senão valor default = VAR
     return t
 
@@ -125,7 +126,7 @@ def t_STRPRINT2(t):
 t_ignore = ' \n\t\r'
 
 def t_error(t):
-    print(f"TOKEN não reconhecido: {t.value[0]}")
+    print(f"AnaLex: Token desconhecido {t.value[0]}")
     t.lexer.skip(1)
 
 ######################## FIM ########################

@@ -20,7 +20,7 @@ import sys
 print(
 """-------------------------------------
 Aplicação de debug
-Testador do analisador lexico
+Debugger do analisador lexico
 -------------------------------------
 """)
 

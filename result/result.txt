@@ -5,24 +5,12 @@ pushi 0
 pushi 0 
 pushi 0 
 pushi 0 
-start
-PUSHI 1
+
+start 
 PUSHI 2
-PUSHI 3
-PUSHI 4
-STOREG 1 
-STOREG 0 
-dup 1 
-STOREG 3 
-STOREG 5 
-dup 1 
-STOREG 2 
-STOREG 4 
-PUSHG 2 
-PUSHG 3 
-PUSHG 0 
-PUSHG 1 
-PUSHG 4 
-PUSHG 5 
+PUSHI 2
+EQUAL 
+PUSHI 0 
+EQUAL 
 WRITEI
 stop

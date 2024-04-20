@@ -16,30 +16,42 @@
 #  start -> cont                    // P1 - Conteudo
 #        | COLON ID cont SEMICOLON  // P2 - Função
 #
-#  cont -> NUM cont         // P3  - Inserir num na stack 
-#       | PONTO cont        // P4  - Print 
-#       | MAIS cont         // P5  - Soma 
-#       | MENOS cont        // P6  - Subtração 
-#       | MUL cont          // P7  - Multiplicação 
-#       | DIV cont          // P8  - Divisão 
-#       | MOD cont          // P9  - Resto da divisã inteira
-#       | DUP cont          // P10 - Duplicar valor na stack
-#       | CHAR LETRA cont   // P11 - Inserir letra na stack (TALVEZ TENHA QUE METER NA STRING STACK????????????????????????)
-#       | SWAP cont         // P12 - Da swap aos dois ultimos elems 
-#       | DROP cont         // P13 - Retira o primeiro elem da stack
-#       | STRPRINT cont     // P14 - Dá print a uma string
-#       | STRPRINT2 cont    // P15 - Dá print a uma string mas remove espaços consecutivos
-#       | COMMENT cont      // P16 - Comentario
-#       | ENDCOMMENT cont   // P17 - Comentario de linha
-#       | ID cont           // P18 - Chamar função
-#       | NIP cont          // P19 - Remove o segundo item da stack
-#       | 2DROP cont        // P20 - Remove os dois elementos no topo da stack
-#       | ROT cont          // P21 - Coloca o terceiro item no topo
-#       | OVER cont         // P22 - Faz uma copia do segundo item e coloca no topo
-#       | 2DUP cont         // P20 - Duplica o par no topo da stack 
-#       | 2SWAP cont        // P20 - Troca os dois pares no topo da stack 
-#       | 2OVER cont        // P21 - Copiar o 2o par no topo da stack e colar no topo da stack
-#       | Empty             // P23 - Vazio
+#  cont -> NUM SPACES cont  // P3  - Dá output a uma determinada quantidade de espaços (Exige um numero antes que é verificado por gramatica).
+#       | NUM PICK cont     // P4  - Faz uma copia do n-esimo elemento da stack
+#       | NUM cont          // P5  - Inserir num na stack 
+#       | PONTO cont        // P6  - Print 
+#       | MAIS cont         // P7  - Soma 
+#       | MENOS cont        // P8  - Subtração 
+#       | MUL cont          // P9  - Multiplicação 
+#       | DIV cont          // P10 - Divisão 
+#       | MOD cont          // P11 - Resto da divisã inteira
+#       | DUP cont          // P12 - Duplicar valor na stack
+#       | CHAR LETRA cont   // P13 - Inserir letra na stack 
+#       | SWAP cont         // P14 - Da swap aos dois ultimos elems 
+#       | DROP cont         // P15 - Retira o primeiro elem da stack
+#       | STRPRINT cont     // P16 - Dá print a uma string
+#       | STRPRINT2 cont    // P17 - Dá print a uma string mas remove espaços consecutivos
+#       | COMMENT cont      // P18 - Comentario
+#       | ENDCOMMENT cont   // P19 - Comentario de linha
+#       | ID cont           // P20 - Chamar função
+#       | NIP cont          // P21 - Remove o segundo item da stack
+#       | 2DROP cont        // P22 - Remove os dois elementos no topo da stack
+#       | ROT cont          // P23 - Coloca o terceiro item no topo
+#       | OVER cont         // P24 - Faz uma copia do segundo item e coloca no topo
+#       | 2DUP cont         // P25 - Duplica o par no topo da stack 
+#       | 2SWAP cont        // P26 - Troca os dois pares no topo da stack 
+#       | 2OVER cont        // P27 - Copiar o 2o par no topo da stack e colar no topo da stack
+#       | TUCK cont         // P28 - Insere uma copia do primeiro elemento debaixo do segundo
+#       | EMIT cont         // P29 - Dá print ao caracter na primeira posição da stack, o caracter é representado em ascii. 
+#       | KEY cont          // P30 - Recebe como input um caracter/tecla e coloca no topo da stack.
+#       | SPACE cont        // P31 - Da output a um espaço.
+#       | CR cont           // P32 - Dá output a um new-line (\n).
+#       | EQ cont           // P33 - Retorna verdade se os dois valores no topo da stack forem iguais.
+#       | NEQ cont          // P33 - Retorna verdade se os dois valores no topo da stack forem diferentes.
+#       | MENOR cont        // P34 - Retorna verdade se o 2 valor no topo da stack for menor que o primeiro. Infixo: 10 < 2, Posfixo: 10 2 <.
+#       | MAIOR cont        // P35 - Retorna verdade se o 2 valor no topo da stack for maior que o primeiro. Infixo: 10 > 2, Posfixo: 10 2 >.
+#       | ZEROEQ cont       // P36 - Retorna verdade se o valor no topo da stack for igual a zero.
+#       | Empty             // P37 - Vazio
 
 #################################### SETUP ####################################
 # Imports
@@ -117,6 +129,19 @@ def p_start_func(p):
     if(debug): print("P_start_cont, Função guardada")
     
 #------------------------------- REGRAS PARA CONT ------------------------------- 
+def p_cont_spaces(p):
+    'cont : NUM SPACES cont'
+    spaces_str = ""
+    for n in range(int(p[1])): spaces_str += " "  # Criar uma string com o numero de espaços pretendidos 
+    p[0] = f"PUSHS \"{spaces_str}\" \nWRITES \n" + str(p[3])
+    if(debug): print("P_cont_spaces")
+
+# DESATIVADO (Funcionamento incorreto)
+#def p_cont_pick(p):
+#    'cont : NUM PICK cont'
+#    p[0] = "PUSHL " + str(p[1]) + '\n' + str(p[3]) 
+#    if(debug): print("P_cont_pick")
+
 def p_cont_num(p):
     'cont : NUM cont'
     p[0] = "PUSHI " + str(p[1]) + '\n' + str(p[2])
@@ -174,12 +199,12 @@ def p_cont_drop(p):
 
 def p_cont_strprint(p):
     'cont : STRPRINT cont' 
-    p[0] = f"PUSHS \"{p[1]}\" \nWRITES\n" + str(p[2])  
+    p[0] = f"PUSHS \"{p[1]}\" \nWRITES \n" + str(p[2])  
     if(debug): print("P_cont_strprint")
 
 def p_cont_strprint2(p):
     'cont : STRPRINT2 cont' 
-    p[0] = f"PUSHS \"{p[1]}\" \nWRITES\n" + str(p[2]) 
+    p[0] = f"PUSHS \"{p[1]}\" \nWRITES \n" + str(p[2]) 
     if(debug): print("P_cont_strprint2")
 
 def p_cont_comment(p):
@@ -248,6 +273,66 @@ def p_cont_2over(p):
     p[0] = vmCode + str(p[2]) 
     if(debug): print("P_cont_2over")
 
+def p_cont_tuck(p):
+    'cont : TUCK cont' 
+    vmCode = "DUP 1 \nSTOREG 0 \nSTOREG 2 \nSTOREG 1 \nPUSHG 0 \nPUSHG 1 \nPUSHG 2 \n"
+    p[0] = vmCode + str(p[2]) 
+    if(debug): print("P_cont_tuck")
+
+# CUIDADO: Esta implementação do emit não irá transformar o int no caracter correspondente, 
+# , já que não é possivel realizar esta conversão na EWVM, 
+# , foi ponderada a criação de um função com uma grande quantidade de ifs para realizar a conversão.
+def p_cont_emit(p):
+    'cont : EMIT cont' 
+    vmCode = "STRI \nWRITES \n"
+    p[0] = vmCode + str(p[2]) 
+    if(debug): print("P_cont_emit")
+
+def p_cont_space(p):
+    'cont : SPACE cont' 
+    p[0] = "PUSHS \" \" \nWRITES \n" + str(p[2]) 
+    if(debug): print("P_cont_space")
+
+def p_cont_cr(p):
+    'cont : CR cont' 
+    p[0] = "WRITELN \n" + str(p[2]) 
+    if(debug): print("P_cont_cr")
+
+def p_cont_eq(p):
+    'cont : EQ cont' 
+    p[0] = "EQUAL \n" + str(p[2]) 
+    if(debug): print("P_cont_eq")
+
+def p_cont_neq(p):
+    'cont : NEQ cont' 
+    p[0] = "EQUAL \nPUSHI 0 \nEQUAL \n" + str(p[2]) 
+    if(debug): print("P_cont_neq")
+
+def p_cont_menor(p):
+    'cont : MENOR cont' 
+    p[0] = "INF \n" + str(p[2]) 
+    if(debug): print("P_cont_menor")
+
+def p_cont_maior(p):
+    'cont : MAIOR cont' 
+    p[0] = "SUP \n" + str(p[2]) 
+    if(debug): print("P_cont_maior")
+
+def p_cont_zeroeq(p):
+    'cont : ZEROEQ cont' 
+    p[0] = "NOT \n" + str(p[2]) 
+    if(debug): print("P_cont_zeroeq")
+
+def p_cont_zeromaior(p):
+    'cont : ZEROMAIOR cont' 
+    p[0] = "PUSHI 0 \nSUP \n" + str(p[2]) 
+    if(debug): print("P_cont_zeromaior")
+
+def p_cont_zeromenor(p):
+    'cont : ZEROMENOR cont' 
+    p[0] = "PUSHI 0 \nINF \n" + str(p[2]) 
+    if(debug): print("P_cont_zeromenor")
+
 def p_cont_empty(p):
     'cont : empty'
     p[0] = ''
@@ -261,29 +346,25 @@ def p_empty(p):
 
 #------------------------------- ERROS -------------------------------
 def p_error(p):
-    print("Erro sintático no input!")
     if p:
-        print(f"Erro sintático na posição {p.lexpos}: token '{p.value}'")
+        print(f"AnaSin: Erro gramatical na posição {p.lexpos}: token '{p.value}'")
     else:
-        print("Erro sintático: fim inesperado do input")
+        print("AnaSin: Erro, fim inesperado do input")
 
 #################################### PARSER ####################################
 # Construir o parser
 parser = yacc.yacc()
 
 # Iterar cada linha do input
-final = carregarTxt(ficheiroStart) + "start\n"
+final = carregarTxt(ficheiroStart) + "\nstart \n"
 for linha in sys.stdin:
     if(debug): print("DEBUG:")
     result = parser.parse(linha)
-    print()
-    print("EXPRESSÃO RECEBIDA:")
-    print(linha)
-    print()
     final += result
 final += "stop\n"
 
 # Obter resultado final e trata-lo
+print()
 print("RESULTADO FINAL:")
 print(final)
 guardarResultado(localResultado, final)
