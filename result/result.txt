@@ -6,10 +6,7 @@ pushi 0
 pushi 0 
 pushi 0 
 
-start 
-// Função func1
-PUSHI 1
-// Fim função func1
+start
 stop
 
 //---------------- Funções do sistema ----------------//
