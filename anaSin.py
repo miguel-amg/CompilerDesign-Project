@@ -16,57 +16,53 @@
 # python3 anaSin.py debug
 
 #################################### GRAMATICA ####################################
-#  exp -> exp func 
-#       | exp cont
+#  exp -> func exp
+#       | op exp
 #       | empty
 # 
 #  func -> COLON ID cont SEMICOLON
 #
-#  cont -> cont op
+#  cont -> NUM SPACES  // P3  - Dá output a uma determinada quantidade de espaços (Exige um numero antes que é verificado por gramatica).
+#       | NUM PICK     // P4  - Faz uma copia do n-esimo elemento da stack
+#       | NUM          // P5  - Inserir num na stack 
+#       | PONTO        // P6  - Print 
+#       | MAIS         // P7  - Soma 
+#       | MENOS        // P8  - Subtração 
+#       | MUL          // P9  - Multiplicação 
+#       | DIV          // P10 - Divisão 
+#       | MOD          // P11 - Resto da divisã inteira
+#       | DUP          // P12 - Duplicar valor na stack
+#       | CHAR LETRA   // P13 - Inserir letra na stack 
+#       | SWAP         // P14 - Da swap aos dois ultimos elems 
+#       | DROP         // P15 - Retira o primeiro elem da stack
+#       | STRPRINT     // P16 - Dá print a uma string
+#       | STRPRINT2    // P17 - Dá print a uma string mas remove espaços consecutivos
+#       | COMMENT      // P18 - Comentario
+#       | ENDCOMMENT   // P19 - Comentario de linha
+#       | ID           // P20 - Chamar função
+#       | NIP          // P21 - Remove o segundo item da stack
+#       | 2DROP        // P22 - Remove os dois elementos no topo da stack
+#       | ROT          // P23 - Coloca o terceiro item no topo
+#       | OVER         // P24 - Faz uma copia do segundo item e coloca no topo
+#       | 2DUP         // P25 - Duplica o par no topo da stack 
+#       | 2SWAP        // P26 - Troca os dois pares no topo da stack 
+#       | 2OVER        // P27 - Copiar o 2o par no topo da stack e colar no topo da stack
+#       | TUCK         // P28 - Insere uma copia do primeiro elemento debaixo do segundo
+#       | EMIT         // P29 - Dá print ao caracter na primeira posição da stack, o caracter é representado em ascii. 
+#       | KEY          // P30 - Recebe como input um caracter/tecla e coloca no topo da stack.
+#       | SPACE        // P31 - Da output a um espaço.
+#       | CR           // P32 - Dá output a um new-line (\n).
+#       | EQ           // P33 - Retorna verdade se os dois valores no topo da stack forem iguais.
+#       | NEQ          // P33 - Retorna verdade se os dois valores no topo da stack forem diferentes.
+#       | MENOR        // P34 - Retorna verdade se o 2 valor no topo da stack for menor que o primeiro. Infixo: 10 < 2, Posfixo: 10 2 <.
+#       | MAIOR        // P35 - Retorna verdade se o 2 valor no topo da stack for maior que o primeiro. Infixo: 10 > 2, Posfixo: 10 2 >.
+#       | ZEROEQ       // P36 - Retorna verdade se o valor no topo da stack for igual de zero.
+#       | ZERONEQ      // P37 - Retorna verdade se o valor no topo da stack for diferente de zero.
+#       | NEGATE       // P38 - Nega o numero no topo da stack.
+#       | MIN          // P38 - Retorna o menor dos dois valores no topo da stack.
+#       | MAX          // P38 - Retorna o maior dos dois valores no topo da stack.
+#       | ABS          // P39 - Retorna o absoluto do valor no topo da stack.
 #       | empty
-#
-#  op ->  NUM SPACES  // P3  - Dá output a uma determinada quantidade de espaços (Exige um numero antes que é verificado por gramatica).
-#       | NUM PICK    // P4  - Faz uma copia do n-esimo elemento da stack
-#       | NUM         // P5  - Inserir num na stack 
-#       | PONTO       // P6  - Print 
-#       | MAIS        // P7  - Soma 
-#       | MENOS       // P8  - Subtração 
-#       | MUL         // P9  - Multiplicação 
-#       | DIV         // P10 - Divisão 
-#       | MOD         // P11 - Resto da divisã inteira
-#       | DUP         // P12 - Duplicar valor na stack
-#       | CHAR LETRA  // P13 - Inserir letra na stack 
-#       | SWAP        // P14 - Da swap aos dois ultimos elems 
-#       | DROP        // P15 - Retira o primeiro elem da stack
-#       | STRPRINT    // P16 - Dá print a uma string
-#       | STRPRINT2   // P17 - Dá print a uma string mas remove espaços consecutivos
-#       | COMMENT     // P18 - Comentario
-#       | ENDCOMMENT  // P19 - Comentario de linha
-#       | ID          // P20 - Chamar função
-#       | NIP         // P21 - Remove o segundo item da stack
-#       | 2DROP       // P22 - Remove os dois elementos no topo da stack
-#       | ROT         // P23 - Coloca o terceiro item no topo
-#       | OVER        // P24 - Faz uma copia do segundo item e coloca no topo
-#       | 2DUP        // P25 - Duplica o par no topo da stack 
-#       | 2SWAP       // P26 - Troca os dois pares no topo da stack 
-#       | 2OVER       // P27 - Copiar o 2o par no topo da stack e colar no topo da stack
-#       | TUCK        // P28 - Insere uma copia do primeiro elemento debaixo do segundo
-#       | EMIT        // P29 - Dá print ao caracter na primeira posição da stack, o caracter é representado em ascii. 
-#       | KEY         // P30 - Recebe como input um caracter/tecla e coloca no topo da stack.
-#       | SPACE       // P31 - Da output a um espaço.
-#       | CR          // P32 - Dá output a um new-line (\n).
-#       | EQ          // P33 - Retorna verdade se os dois valores no topo da stack forem iguais.
-#       | NEQ         // P33 - Retorna verdade se os dois valores no topo da stack forem diferentes.
-#       | MENOR       // P34 - Retorna verdade se o 2 valor no topo da stack for menor que o primeiro. Infixo: 10 < 2, Posfixo: 10 2 <.
-#       | MAIOR       // P35 - Retorna verdade se o 2 valor no topo da stack for maior que o primeiro. Infixo: 10 > 2, Posfixo: 10 2 >.
-#       | ZEROEQ      // P36 - Retorna verdade se o valor no topo da stack for igual de zero.
-#       | ZERONEQ     // P37 - Retorna verdade se o valor no topo da stack for diferente de zero.
-#       | NEGATE      // P38 - Nega o numero no topo da stack.
-#       | MIN         // P38 - Retorna o menor dos dois valores no topo da stack.
-#       | MAX         // P38 - Retorna o maior dos dois valores no topo da stack.
-#       | ABS         // P39 - Retorna o absoluto do valor no topo da stack.
-#       | Empty       // P38 - Vazio
-
 #################################### SETUP ####################################
 # Imports
 from anaLex import tokens
@@ -144,27 +140,11 @@ def tratarArgumentos(argumentos):
 
 ####################################  CODIGO  ####################################
 # ---------------------------------- EXPRESSAO ----------------------------------
-
-def p_exp_func(p):
-    'exp : func exp'
-    p[0] = p[1] + p[2]
-    if(debug): print("P_exp_func")
-    
-def p_exp_cont(p):
-    'exp : cont exp'
-    p[0] = p[1] + p[2]
-    if(debug): print("P_exp_cont")
-
-def p_exp_empty(p):
-    'exp : empty'
-    p[0] = ''
-    if(debug): print("P_exp_empty")
-
-# ---------------------------------- CONTEUDO ---------------------------------- 
-def p_cont(p):
+# Conteudo regras
+def p_cont_op(p):
     'cont : cont op'
     p[0] = p[1] + p[2]
-    if(debug): print("P_cont")
+    if(debug): print("P_cont_op")
 
 def p_cont_empty(p):
     'cont : empty'
@@ -174,7 +154,7 @@ def p_cont_empty(p):
 # ---------------------------------- FUNC ---------------------------------- 
 # Quando uma função é definida o seu codigo é armazenado para quando for chamada ser inserido diretamente
 def p_func(p):
-    'func : COLON ID cont SEMICOLON'
+    'op : COLON ID cont SEMICOLON'
 
     p[0] = ''
     global funcs, funcoesProtegidas
@@ -193,7 +173,7 @@ def p_func(p):
 
     # Armazenar o codigo da função
     funcs[p[2]] = startComment + p[3] + endComment # Armazenar o codigo da função
-    if(debug): print("P_cont_def_func, Função guardada")
+    if(debug): print("P_func, Função guardada")
     
 
 # ---------------------------------- OP ----------------------------------
@@ -440,7 +420,6 @@ def p_op_abs(p):
     'op : ABS' 
     p[0] = "// Função ABS (sistema) \nPUSHA vmAbs \nCALL \nSWAP \nPOP 1 \n// Fim Função ABS (sistema) \n"
     if(debug): print("P_op_abs")
-
 
 #------------------------------- REGRAS PARA EMPTY -------------------------------
 def p_empty(p):
