@@ -109,7 +109,7 @@ def t_NUM(t):
 # Nome de função
 def t_ID(t):
     r'(?<!\S)[A-Za-z_][A-Za-z_0-9]+(?!\S)'
-    t.type = reserved.get(t.value.upper(),'ID') # Verificar se leu uma palavra reservada sem querer, senão valor default = VAR
+    t.type = reserved.get(t.value.upper(),'ID') # Verificar se leu uma palavra reservada sem querer, senão valor default = ID
     return t
 
 # Dá print a uma string | ." txtxtxtx txtxtx"

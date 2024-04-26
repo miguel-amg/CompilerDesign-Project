@@ -16,13 +16,11 @@
 # python3 anaSin.py debug
 
 #################################### GRAMATICA ####################################
-#  exp -> func exp
-#       | op exp
-#       | empty
+#  cont -> cont op
+#        | empty
 # 
-#  func -> COLON ID cont SEMICOLON
-#
-#  cont -> NUM SPACES  // P3  - Dá output a uma determinada quantidade de espaços (Exige um numero antes que é verificado por gramatica).
+#  cont -> COLON ID cont SEMICOLON  
+#       | NUM SPACES   // P3  - Dá output a uma determinada quantidade de espaços (Exige um numero antes que é verificado por gramatica).
 #       | NUM PICK     // P4  - Faz uma copia do n-esimo elemento da stack
 #       | NUM          // P5  - Inserir num na stack 
 #       | PONTO        // P6  - Print 
@@ -62,7 +60,6 @@
 #       | MIN          // P38 - Retorna o menor dos dois valores no topo da stack.
 #       | MAX          // P38 - Retorna o maior dos dois valores no topo da stack.
 #       | ABS          // P39 - Retorna o absoluto do valor no topo da stack.
-#       | empty
 #################################### SETUP ####################################
 # Imports
 from anaLex import tokens
@@ -153,7 +150,7 @@ def p_cont_empty(p):
 
 # ---------------------------------- FUNC ---------------------------------- 
 # Quando uma função é definida o seu codigo é armazenado para quando for chamada ser inserido diretamente
-def p_func(p):
+def p_op_def_func(p):
     'op : COLON ID cont SEMICOLON'
 
     p[0] = ''
@@ -173,9 +170,9 @@ def p_func(p):
 
     # Armazenar o codigo da função
     funcs[p[2]] = startComment + p[3] + endComment # Armazenar o codigo da função
-    if(debug): print("P_func, Função guardada")
+    if(debug): print("P_op_def_func, Função guardada")
     
-
+    
 # ---------------------------------- OP ----------------------------------
 def p_op_spaces(p):
     'op : NUM SPACES'
@@ -203,27 +200,27 @@ def p_op_ponto(p):
 def p_op_sum(p):
     'op : MAIS'
     p[0] = "ADD\n"
-    if(debug): print("P_op_sum ADD")
+    if(debug): print("P_op_sum")
 
 def p_op_sub(p):
     'op : MENOS'
     p[0] = "SUB\n"
-    if(debug): print("P_op_sub SUB")
+    if(debug): print("P_op_sub")
 
 def p_op_mul(p):
     'op : MUL'
     p[0] = "MUL\n"
-    if(debug): print("P_op_mul MUL")
+    if(debug): print("P_op_mul")
 
 def p_op_div(p):
     'op : DIV'
     p[0] = "DIV\n"
-    if(debug): print("P_op_div DIV")
+    if(debug): print("P_op_div")
 
 def p_op_mod(p):
     'op : MOD'
     p[0] = "MOD\n"
-    if(debug): print("P_op_mod MOD")
+    if(debug): print("P_op_mod")
 
 def p_op_dup(p):
     'op : DUP'
@@ -451,7 +448,8 @@ parser = yacc.yacc()
 
 # Iterar o input
 result = parser.parse(sys.stdin.read())
-final = carregarTxt(ficheiroStart) + "\nstart\n" + result + "stop\n\n" + carregarTxt(ficheiroFuncoes)
+if(not debug): final = carregarTxt(ficheiroStart) + "\nstart\n" + result + "stop\n\n" + carregarTxt(ficheiroFuncoes)
+if(debug): final = result # Em modo debug apenas é apresentado o conteudo do result
 
 # Obter resultado final e trata-lo
 print()
