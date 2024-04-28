@@ -16,50 +16,64 @@
 # python3 anaSin.py debug
 
 #################################### GRAMATICA ####################################
-#  cont -> cont op
-#        | empty
-# 
-#  cont -> COLON ID cont SEMICOLON  
-#       | NUM SPACES   // P3  - Dá output a uma determinada quantidade de espaços (Exige um numero antes que é verificado por gramatica).
-#       | NUM PICK     // P4  - Faz uma copia do n-esimo elemento da stack
-#       | NUM          // P5  - Inserir num na stack 
-#       | PONTO        // P6  - Print 
-#       | MAIS         // P7  - Soma 
-#       | MENOS        // P8  - Subtração 
-#       | MUL          // P9  - Multiplicação 
-#       | DIV          // P10 - Divisão 
-#       | MOD          // P11 - Resto da divisã inteira
-#       | DUP          // P12 - Duplicar valor na stack
-#       | CHAR LETRA   // P13 - Inserir letra na stack 
-#       | SWAP         // P14 - Da swap aos dois ultimos elems 
-#       | DROP         // P15 - Retira o primeiro elem da stack
-#       | STRPRINT     // P16 - Dá print a uma string
-#       | STRPRINT2    // P17 - Dá print a uma string mas remove espaços consecutivos
-#       | COMMENT      // P18 - Comentario
-#       | ENDCOMMENT   // P19 - Comentario de linha
-#       | ID           // P20 - Chamar função
-#       | NIP          // P21 - Remove o segundo item da stack
-#       | 2DROP        // P22 - Remove os dois elementos no topo da stack
-#       | ROT          // P23 - Coloca o terceiro item no topo
-#       | OVER         // P24 - Faz uma copia do segundo item e coloca no topo
-#       | 2DUP         // P25 - Duplica o par no topo da stack 
-#       | 2SWAP        // P26 - Troca os dois pares no topo da stack 
-#       | 2OVER        // P27 - Copiar o 2o par no topo da stack e colar no topo da stack
-#       | TUCK         // P28 - Insere uma copia do primeiro elemento debaixo do segundo
-#       | EMIT         // P29 - Dá print ao caracter na primeira posição da stack, o caracter é representado em ascii. 
-#       | KEY          // P30 - Recebe como input um caracter/tecla e coloca no topo da stack.
-#       | SPACE        // P31 - Da output a um espaço.
-#       | CR           // P32 - Dá output a um new-line (\n).
-#       | EQ           // P33 - Retorna verdade se os dois valores no topo da stack forem iguais.
-#       | NEQ          // P33 - Retorna verdade se os dois valores no topo da stack forem diferentes.
-#       | MENOR        // P34 - Retorna verdade se o 2 valor no topo da stack for menor que o primeiro. Infixo: 10 < 2, Posfixo: 10 2 <.
-#       | MAIOR        // P35 - Retorna verdade se o 2 valor no topo da stack for maior que o primeiro. Infixo: 10 > 2, Posfixo: 10 2 >.
-#       | ZEROEQ       // P36 - Retorna verdade se o valor no topo da stack for igual de zero.
-#       | ZERONEQ      // P37 - Retorna verdade se o valor no topo da stack for diferente de zero.
-#       | NEGATE       // P38 - Nega o numero no topo da stack.
-#       | MIN          // P38 - Retorna o menor dos dois valores no topo da stack.
-#       | MAX          // P38 - Retorna o maior dos dois valores no topo da stack.
-#       | ABS          // P39 - Retorna o absoluto do valor no topo da stack.
+#  cont -> cont type
+#        | ε
+#
+#  type -> arit      -- operações aritmeticas
+#        | comment   -- comentarios
+#        | func      -- funções
+#        | stack     -- operações de stack
+#        | compare   -- operações de comparação
+#        | print     -- operações de print
+#
+#  -------------------------------------------------------------------------------
+#
+#  arit -> MAIS    -- Soma 
+#        | MENOS   -- Subtração 
+#        | MUL     -- Multiplicação 
+#        | DIV     -- Divisão 
+#        | MOD     -- Resto da divisão inteira
+#        | ABS     -- Retorna o absoluto do valor no topo da stack.
+#
+#  comment -> COMMENT     -- Comentario
+#           | ENDCOMMENT  -- Comentario de linha
+#
+#  func -> COLON ID cont SEMICOLON  -- Definir função
+#        | ID                       -- Chamar função
+#
+#  stack -> NUM        -- Inserir num na stack 
+#         | CHAR LETRA -- Inserir letra na stack 
+#         | KEY        -- Recebe como input um caracter/tecla e coloca no topo da stack.
+#         | DROP       -- Retira o primeiro elem da stack
+#         | DUP        -- Duplicar valor na stack
+#         | SWAP       -- Da swap aos dois ultimos elems 
+#         | NIP        -- Remove o segundo item da stack
+#         | 2DROP      -- Remove os dois elementos no topo da stack
+#         | ROT        -- Coloca o terceiro item no topo
+#         | OVER       -- Faz uma copia do segundo item e coloca no topo
+#         | 2DUP       -- Duplica o par no topo da stack 
+#         | 2SWAP      -- Troca os dois pares no topo da stack 
+#         | 2OVER      -- Copiar o 2o par no topo da stack e colar no topo da stack
+#         | TUCK       -- Insere uma copia do primeiro elemento debaixo do segundo
+#         | NUM PICK   -- Faz uma copia do n-esimo elemento da stack
+#
+#  compare -> EQ       -- Retorna verdade se os dois valores no topo da stack forem iguais.
+#           | NEQ      -- Retorna verdade se os dois valores no topo da stack forem diferentes.
+#           | MENOR    -- Retorna verdade se o 2 valor no topo da stack for menor que o primeiro. Infixo: 10 < 2, Posfixo: 10 2 <.
+#           | MAIOR    -- Retorna verdade se o 2 valor no topo da stack for maior que o primeiro. Infixo: 10 > 2, Posfixo: 10 2 >.
+#           | ZEROEQ   -- Retorna verdade se o valor no topo da stack for igual de zero.
+#           | ZERONEQ  -- Retorna verdade se o valor no topo da stack for diferente de zero.
+#           | NEGATE   -- Nega o numero no topo da stack.
+#           | MIN      -- Retorna o menor dos dois valores no topo da stack.
+#           | MAX      -- Retorna o maior dos dois valores no topo da stack.
+#
+#  print -> PONTO      -- Print do elemento no topo da stack
+#         | EMIT       -- Dá print ao caracter na primeira posição da stack, o caracter é representado em ascii. 
+#         | STRPRINT   -- Print a uma string
+#         | STRPRINT2  -- Print a uma string mas remove espaços consecutivos
+#         | NUM SPACES -- Print a uma determinada quantidade de espaços (Exige um numero antes que é verificado por gramatica).
+#         | SPACE      -- Print a um espaço.
+#         | CR         -- Print a um new-line (\n).
 #################################### SETUP ####################################
 # Imports
 from anaLex import tokens
@@ -136,10 +150,10 @@ def tratarArgumentos(argumentos):
         raise Exception("Programa: Demasiados argumentos!")
 
 ####################################  CODIGO  ####################################
-# ---------------------------------- EXPRESSAO ----------------------------------
+# ---------------------------------- CONTEUDO ----------------------------------
 # Conteudo regras
 def p_cont_op(p):
-    'cont : cont op'
+    'cont : cont type'
     p[0] = p[1] + p[2]
     if(debug): print("P_cont_op")
 
@@ -148,10 +162,87 @@ def p_cont_empty(p):
     p[0] = ''
     if(debug): print("P_cont_empty")
 
-# ---------------------------------- FUNC ---------------------------------- 
+# ---------------------------------- TYPE ----------------------------------
+def p_type_arit(p):
+    'type : arit'
+    p[0] = p[1]
+    if(debug): print("P_type_arit")
+
+def p_type_comment(p):
+    'type : comment'
+    p[0] = p[1]
+    if(debug): print("P_type_comment")
+
+def p_type_func(p):
+    'type : func'
+    p[0] = p[1]
+    if(debug): print("P_type_func")
+
+def p_type_stack(p):
+    'type : stack'
+    p[0] = p[1]
+    if(debug): print("P_type_stack")
+
+def p_type_compare(p):
+    'type : compare'
+    p[0] = p[1]
+    if(debug): print("P_type_compare")
+
+def p_type_print(p):
+    'type : print'
+    p[0] = p[1]
+    if(debug): print("P_type_print")
+    
+# ----------------------------------------------------------------- ARIT -----------------------------------------------------------------
+
+def p_arit_sum(p):
+    'arit : MAIS'
+    p[0] = "ADD\n"
+    if(debug): print("P_arit_sum")
+
+def p_arit_sub(p):
+    'arit : MENOS'
+    p[0] = "SUB\n"
+    if(debug): print("P_arit_sub")
+
+def p_arit_mul(p):
+    'arit : MUL'
+    p[0] = "MUL\n"
+    if(debug): print("P_arit_mul")
+
+def p_arit_div(p):
+    'arit : DIV'
+    p[0] = "DIV\n"
+    if(debug): print("P_arit_div")
+
+def p_arit_mod(p):
+    'arit : MOD'
+    p[0] = "MOD\n"
+    if(debug): print("P_arit_mod")
+
+# Explicação: Irá utilizar a função definida no ficheiro de funções vmAbs. Remove o valor inicial e deixa so o resultado.
+# Resultado: É inserido o absoluto do valor no topo da stack.
+def p_arit_abs(p):
+    'arit : ABS' 
+    p[0] = "// Função ABS (sistema) \nPUSHA vmAbs \nCALL \nSWAP \nPOP 1 \n// Fim Função ABS (sistema) \n"
+    if(debug): print("P_arit_abs")
+
+    
+# ----------------------------------------------------------------- COMMENT ----------------------------------------------------------------- 
+def p_comment_one(p):
+    'comment : COMMENT' 
+    p[0] = ''
+    if(debug): print("P_comment_one")
+
+def p_op_endcomment(p):
+    'comment : ENDCOMMENT' 
+    p[0] = '' 
+    if(debug): print("P_comment_endcomment")
+
+# ----------------------------------------------------------------- FUNC -----------------------------------------------------------------
 # Quando uma função é definida o seu codigo é armazenado para quando for chamada ser inserido diretamente
-def p_op_def_func(p):
-    'op : COLON ID cont SEMICOLON'
+def p_func_define(p):
+    'func : COLON ID cont SEMICOLON'
 
     p[0] = ''
     global funcs, funcoesProtegidas
@@ -170,100 +261,11 @@ def p_op_def_func(p):
 
     # Armazenar o codigo da função
     funcs[p[2]] = startComment + p[3] + endComment # Armazenar o codigo da função
-    if(debug): print("P_op_def_func, Função guardada")
+    if(debug): print("P_func_define, Função guardada")
     
-    
-# ---------------------------------- OP ----------------------------------
-def p_op_spaces(p):
-    'op : NUM SPACES'
-    spaces_str = ""
-    for n in range(int(p[1])): spaces_str += " "  # Criar uma string com o numero de espaços pretendidos 
-    p[0] = f"PUSHS \"{spaces_str}\" \nWRITES \n" 
-    if(debug): print("P_op_spaces")
 
-# DESATIVADO (Funcionamento incorreto)
-#def p_cont_pick(p):
-#    'cont : NUM PICK cont'
-#    p[0] = "PUSHL " + str(p[1]) + '\n' + str(p[3]) 
-#    if(debug): print("P_cont_pick")
-
-def p_op_num(p):
-    'op : NUM'
-    p[0] = "PUSHI " + str(p[1]) + '\n'
-    if(debug): print("P_op_num")
-
-def p_op_ponto(p):
-    'op : PONTO'
-    p[0] = "WRITEI\n"
-    if(debug): print("P_op_ponto")
-
-def p_op_sum(p):
-    'op : MAIS'
-    p[0] = "ADD\n"
-    if(debug): print("P_op_sum")
-
-def p_op_sub(p):
-    'op : MENOS'
-    p[0] = "SUB\n"
-    if(debug): print("P_op_sub")
-
-def p_op_mul(p):
-    'op : MUL'
-    p[0] = "MUL\n"
-    if(debug): print("P_op_mul")
-
-def p_op_div(p):
-    'op : DIV'
-    p[0] = "DIV\n"
-    if(debug): print("P_op_div")
-
-def p_op_mod(p):
-    'op : MOD'
-    p[0] = "MOD\n"
-    if(debug): print("P_op_mod")
-
-def p_op_dup(p):
-    'op : DUP'
-    p[0] = "DUP 1\n" # Dup 1 na vm é duplicar o primeiro elem
-    if(debug): print("P_op_dup")
-
-def p_op_letra(p):
-    'op : CHAR LETRA'
-    p[0] = "PUSHI " + str(ord(p[2])) + '\n' # A letra tem de ser int na stack
-    if(debug): print("P_op_letra")
-
-def p_op_swap(p):
-    'op : SWAP'
-    p[0] = "SWAP\n"
-    if(debug): print("P_op_swap")
-
-def p_op_drop(p):
-    'op : DROP'
-    p[0] = "POP 1\n" # Pop 1 na vm tira o primeiro elem da stack 
-    if(debug): print("P_op_drop")
-
-def p_op_strprint(p):
-    'op : STRPRINT' 
-    p[0] = f"PUSHS \"{p[1]}\" \nWRITES \n"
-    if(debug): print("P_op_strprint")
-
-def p_op_strprint2(p):
-    'op : STRPRINT2' 
-    p[0] = f"PUSHS \"{p[1]}\" \nWRITES \n"
-    if(debug): print("P_op_strprint2")
-
-def p_op_comment(p):
-    'op : COMMENT' 
-    p[0] = ''
-    if(debug): print("P_op_comment")
-
-def p_op_endcomment(p):
-    'op : ENDCOMMENT' 
-    p[0] = '' 
-    if(debug): print("P_op_endcomment")
-
-def p_op_func(p):
-    'op : ID' 
+def p_func_call(p):
+    'func : ID' 
     global funcs
 
     print(str(funcs))
@@ -275,148 +277,198 @@ def p_op_func(p):
         # Se não estiver definida, gere uma mensagem de erro
         raise Exception(f"Erro de compilacao, identificador de função desconhecido \"{p[1]}\".")
     
-    if(debug): print("P_op_func")
+    if(debug): print("P_func_call")
+    
+# ----------------------------------------------------------------- STACK ----------------------------------------------------------------- 
 
-def p_op_nip(p):
-    'op : NIP' 
+# DESATIVADO (Funcionamento incorreto)
+#def p_cont_pick(p):
+#    'cont : NUM PICK cont'
+#    p[0] = "PUSHL " + str(p[1]) + '\n' + str(p[3]) 
+#    if(debug): print("P_cont_pick")
+
+def p_stack_num(p):
+    'stack : NUM'
+    p[0] = "PUSHI " + str(p[1]) + '\n'
+    if(debug): print("P_stack_num")
+
+def p_stack_dup(p):
+    'stack : DUP'
+    p[0] = "DUP 1\n" # Dup 1 na vm é duplicar o primeiro elem
+    if(debug): print("P_stack_dup")
+
+def p_stack_letra(p):
+    'stack : CHAR LETRA'
+    p[0] = "PUSHI " + str(ord(p[2])) + '\n' # A letra tem de ser int na stack
+    if(debug): print("P_stack_letra")
+
+def p_stack_swap(p):
+    'stack : SWAP'
+    p[0] = "SWAP\n"
+    if(debug): print("P_stack_swap")
+
+def p_stack_drop(p):
+    'stack : DROP'
+    p[0] = "POP 1\n" # Pop 1 na vm tira o primeiro elem da stack 
+    if(debug): print("P_stack_drop")
+
+def p_stack_nip(p):
+    'stack : NIP' 
     p[0] = "SWAP\nPOP 1\n"
-    if(debug): print("P_op_nip")
+    if(debug): print("P_stack_nip")
 
-def p_op_2drop(p):
-    'op : 2DROP' 
+def p_stack_2drop(p):
+    'stack : 2DROP' 
     p[0] = "POP 2\n"
-    if(debug): print("P_op_2drop")
+    if(debug): print("P_stack_2drop")
 
 # Explicação: Guardar os 3 valores no topo da stack na stack temporaria, inserir denovo trocado 
 # Resultado: O 3 item foi para o topo
-def p_op_rot(p):
-    'op : ROT'
+def p_stack_rot(p):
+    'stack : ROT'
     vmCode = "STOREG 2 \nSTOREG 1 \nSTOREG 0 \nPUSHG 2 \nPUSHG 1 \nPUSHG 0 \n"
     p[0] = vmCode
-    if(debug): print("P_op_rot")
+    if(debug): print("P_stack_rot")
 
 # Explicação: Armazenar o valor no topo, duplicar o 2 valor, inserir denovo o topo, trocar
 # Resultado: Foi duplicado o 2 valor do topo da stack e inserido no topo  
-def p_op_over(p):
-    'op : OVER'
+def p_stack_over(p):
+    'stack : OVER'
     vmCode = "STOREG 0 \nDUP 1 \nPUSHG 0 \nSWAP \n"
     p[0] = vmCode
-    if(debug): print("P_op_over")
+    if(debug): print("P_stack_over")
 
 # Explicação: Duplicar o elemento no topo e armazenar, duplicar o 2 elemento e armazenar, inserir os pares por ordem
 # Resultado: O par no topo da stack foi duplicado
-def p_op_2dup(p):
-    'op : 2DUP' 
+def p_stack_2dup(p):
+    'stack : 2DUP' 
     vmCode = "DUP 1 \nSTOREG 0 \nSTOREG 1 \nDUP 1 \nSTOREG 2 \nSTOREG 3 \nPUSHG 2 \nPUSHG 0 \nPUSHG 3 \nPUSHG 1 \n"
     p[0] = vmCode
-    if(debug): print("P_op_2dup")
+    if(debug): print("P_stack_2dup")
 
 # Explicação: Armazenar os dois pares no topo da stack mas inserir com estes trocados, inserir de volta stack  
 # Resultado: O 2 pares no topo da stack foram trocados
-def p_op_2swap(p):
-    'op : 2SWAP' 
+def p_stack_2swap(p):
+    'stack : 2SWAP' 
     vmCode = "STOREG 1 \nSTOREG 0 \nSTOREG 3 \nSTOREG 2 \nPUSHG 0 \nPUSHG 1 \nPUSHG 2 \nPUSHG 3 \n"
     p[0] = vmCode
-    if(debug): print("P_op_2swap")
+    if(debug): print("P_stack_2swap")
 
 # Explicação: Armazenar os dois pares, duplicar os valores do 2 par, inserir tudo devolta na stack  
 # Resultado: O 2o par foi copiado e inserido no topo da stack
-def p_op_2over(p):
-    'op : 2OVER' 
+def p_stack_2over(p):
+    'stack : 2OVER' 
     vmCode = "STOREG 1 \nSTOREG 0 \ndup 1 \nSTOREG 3 \nSTOREG 5 \ndup 1 \nSTOREG 2 \nSTOREG 4 \nPUSHG 2 \nPUSHG 3 \nPUSHG 0 \nPUSHG 1 \nPUSHG 4 \nPUSHG 5 \n"
     p[0] = vmCode 
-    if(debug): print("P_op_2over")
+    if(debug): print("P_stack_2over")
 
-def p_op_tuck(p):
-    'op : TUCK' 
+def p_stack_tuck(p):
+    'stack : TUCK' 
     vmCode = "DUP 1 \nSTOREG 0 \nSTOREG 2 \nSTOREG 1 \nPUSHG 0 \nPUSHG 1 \nPUSHG 2 \n"
     p[0] = vmCode
-    if(debug): print("P_op_tuck")
+    if(debug): print("P_stack_tuck")
+
+# ----------------------------------------------------------------- COMPARE -----------------------------------------------------------------
+def p_compare_eq(p):
+    'compare : EQ' 
+    p[0] = "EQUAL \n"
+    if(debug): print("P_compare_eq")
+
+def p_compare_neq(p):
+    'compare : NEQ' 
+    p[0] = "EQUAL \nPUSHI 0 \nEQUAL \n"
+    if(debug): print("P_compare_neq")
+
+def p_compare_menor(p):
+    'compare : MENOR' 
+    p[0] = "INF \n"
+    if(debug): print("P_compare_menor")
+
+def p_compare_maior(p):
+    'compare : MAIOR' 
+    p[0] = "SUP \n"
+    if(debug): print("P_compare_maior")
+
+def p_compare_zeroeq(p):
+    'compare : ZEROEQ' 
+    p[0] = "NOT \n"
+    if(debug): print("P_compare_zeroeq")
+
+def p_compare_zeromaior(p):
+    'compare : ZEROMAIOR' 
+    p[0] = "PUSHI 0 \nSUP \n"
+    if(debug): print("P_compare_zeromaior")
+
+def p_compare_zeromenor(p):
+    'compare : ZEROMENOR' 
+    p[0] = "PUSHI 0 \nINF \n"
+    if(debug): print("P_compare_zeromenor")
+
+def p_compare_zeroneq(p):
+    'compare : ZERONEQ' 
+    p[0] = "NOT \nPUSHI 0 \nEQUAL \n"
+    if(debug): print("P_compare_zeroneq")
+
+def p_compare_negate(p):
+    'compare : NEGATE' 
+    p[0] = "PUSHI -1 \nMUL \n"
+    if(debug): print("P_compare_negate")
+
+# Explicação: Irá utilizar a função definida no ficheiro de funções vmMin. Remove os 2 valores iniciais e deixa so o resultado.
+# Resultado: É inserido o menor valor de entre os 2 no topo da stack.
+def p_compare_min(p):
+    'compare : MIN' 
+    p[0] = "// Função MIN (sistema) \nPUSHA vmMin \nCALL  \nSWAP \nPOP 1 \nSWAP \nPOP 1 \n// Fim Função MIN (sistema) \n" 
+    if(debug): print("P_compare_min")
+
+# Explicação: Irá utilizar a função definida no ficheiro de funções vmMax. Remove os 2 valores iniciais e deixa so o resultado.
+# Resultado: É inserido o maior valor de entre os 2 no topo da stack.
+def p_compare_max(p):
+    'compare : MAX' 
+    p[0] = "// Função MAX (sistema) \nPUSHA vmMax \nCALL  \nSWAP \nPOP 1 \nSWAP \nPOP 1 \n// Fim Função MAX (sistema) \n"
+    if(debug): print("P_compare_max")
+
+# ----------------------------------------------------------------- PRINT -----------------------------------------------------------------
+def p_print_strprint(p):
+    'print : STRPRINT' 
+    p[0] = f"PUSHS \"{p[1]}\" \nWRITES \n"
+    if(debug): print("P_print_strprint")
+
+def p_print_strprint2(p):
+    'print : STRPRINT2' 
+    p[0] = f"PUSHS \"{p[1]}\" \nWRITES \n"
+    if(debug): print("P_print_strprint2")
+
+def p_print_ponto(p):
+    'print : PONTO'
+    p[0] = "WRITEI\n"
+    if(debug): print("P_print_ponto")
+
+def p_print_space(p):
+    'print : SPACE' 
+    p[0] = "PUSHS \" \" \nWRITES \n" + str(p[2]) 
+    if(debug): print("P_print_space")
+
+def p_print_cr(p):
+    'print : CR' 
+    p[0] = "WRITELN \n"
+    if(debug): print("P_print_cr")
+
+def p_print_spaces(p):
+    'print : NUM SPACES'
+    spaces_str = ""
+    for n in range(int(p[1])): spaces_str += " "  # Criar uma string com o numero de espaços pretendidos 
+    p[0] = f"PUSHS \"{spaces_str}\" \nWRITES \n" 
+    if(debug): print("P_print_spaces")
 
 # CUIDADO: Esta implementação do emit não irá transformar o int no caracter correspondente, 
 # , já que não é possivel realizar esta conversão na EWVM, 
 # , foi ponderada a criação de um função com uma grande quantidade de ifs para realizar a conversão.
-def p_op_emit(p):
-    'op : EMIT' 
+def p_print_emit(p):
+    'print : EMIT' 
     vmCode = "STRI \nWRITES \n"
     p[0] = vmCode
-    if(debug): print("P_op_emit")
-
-def p_op_space(p):
-    'op : SPACE' 
-    p[0] = "PUSHS \" \" \nWRITES \n" + str(p[2]) 
-    if(debug): print("P_op_space")
-
-def p_op_cr(p):
-    'op : CR' 
-    p[0] = "WRITELN \n"
-    if(debug): print("P_op_cr")
-
-def p_op_eq(p):
-    'op : EQ' 
-    p[0] = "EQUAL \n"
-    if(debug): print("P_op_eq")
-
-def p_op_neq(p):
-    'op : NEQ' 
-    p[0] = "EQUAL \nPUSHI 0 \nEQUAL \n"
-    if(debug): print("P_op_neq")
-
-def p_op_menor(p):
-    'op : MENOR' 
-    p[0] = "INF \n"
-    if(debug): print("P_op_menor")
-
-def p_op_maior(p):
-    'op : MAIOR' 
-    p[0] = "SUP \n"
-    if(debug): print("P_op_maior")
-
-def p_op_zeroeq(p):
-    'op : ZEROEQ' 
-    p[0] = "NOT \n"
-    if(debug): print("P_op_zeroeq")
-
-def p_op_zeromaior(p):
-    'op : ZEROMAIOR' 
-    p[0] = "PUSHI 0 \nSUP \n"
-    if(debug): print("P_op_zeromaior")
-
-def p_op_zeromenor(p):
-    'op : ZEROMENOR' 
-    p[0] = "PUSHI 0 \nINF \n"
-    if(debug): print("P_op_zeromenor")
-
-def p_op_zeroneq(p):
-    'op : ZERONEQ' 
-    p[0] = "NOT \nPUSHI 0 \nEQUAL \n"
-    if(debug): print("P_op_zeroneq")
-
-def p_op_negate(p):
-    'op : NEGATE' 
-    p[0] = "PUSHI -1 \nMUL \n"
-    if(debug): print("P_op_negate")
-
-# Explicação: Irá utilizar a função definida no ficheiro de funções vmMin. Remove os 2 valores iniciais e deixa so o resultado.
-# Resultado: É inserido o menor valor de entre os 2 no topo da stack.
-def p_op_min(p):
-    'op : MIN' 
-    p[0] = "// Função MIN (sistema) \nPUSHA vmMin \nCALL  \nSWAP \nPOP 1 \nSWAP \nPOP 1 \n// Fim Função MIN (sistema) \n" 
-    if(debug): print("P_op_min")
-
-# Explicação: Irá utilizar a função definida no ficheiro de funções vmMax. Remove os 2 valores iniciais e deixa so o resultado.
-# Resultado: É inserido o maior valor de entre os 2 no topo da stack.
-def p_op_max(p):
-    'op : MAX' 
-    p[0] = "// Função MAX (sistema) \nPUSHA vmMax \nCALL  \nSWAP \nPOP 1 \nSWAP \nPOP 1 \n// Fim Função MAX (sistema) \n"
-    if(debug): print("P_op_max")
-
-# Explicação: Irá utilizar a função definida no ficheiro de funções vmAbs. Remove o valor inicial e deixa so o resultado.
-# Resultado: É inserido o absoluto do valor no topo da stack.
-def p_op_abs(p):
-    'op : ABS' 
-    p[0] = "// Função ABS (sistema) \nPUSHA vmAbs \nCALL \nSWAP \nPOP 1 \n// Fim Função ABS (sistema) \n"
-    if(debug): print("P_op_abs")
+    if(debug): print("P_print_emit")
 
 #------------------------------- REGRAS PARA EMPTY -------------------------------
 def p_empty(p):

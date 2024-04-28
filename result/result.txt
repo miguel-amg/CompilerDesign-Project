@@ -1,3 +1,11 @@
+// Função teste4
+// Função teste2
+// Função teste
 PUSHI 1
-PUSHI 2
-ADD
+// Fim função teste
+// Fim função teste2
+// Função teste
+PUSHI 1
+// Fim função teste
+PUSHI 3
+// Fim função teste4
