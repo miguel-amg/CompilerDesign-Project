@@ -74,6 +74,9 @@
 #         | NUM SPACES -- Print a uma determinada quantidade de espaços (Exige um numero antes que é verificado por gramatica).
 #         | SPACE      -- Print a um espaço.
 #         | CR         -- Print a um new-line (\n).
+#
+#  cond -> IF cont ELSE cont THEN 
+#        | IF cont THEN cont 
 #################################### SETUP ####################################
 # Imports
 from anaLex import tokens
@@ -85,6 +88,7 @@ import re
 # Variáveis 
 global debug             # (Valor é alterado pela função tratarArgumentos)
 global funcoesProtegidas # (Valor é alterado pela função carregarFuncoesProtegidas) 
+global condCounter       # Contador para o numero de condições
 
 localResultado  = "result"                # Pasta para os resultados
 ficheiroStart   = "recursos/start.txt"    # Ficheiro com o inicio do codigo
@@ -92,6 +96,7 @@ ficheiroFuncoes = "recursos/funcoes.txt"  # Ficheiro as funções utilizadas na 
 debug = False  # Modo debug ativo ou inativo (Inativo por predefinição)
 funcs = {}     # Armazenar o codigo das funções
 funcoesProtegidas = set() # Contém os nomes de todas as funções do sistema. Utilizado para impedir repetições.
+condCounter = 0 # Contador para o numero de condições
 
 #################################### BOAS-VINDAS ####################################
 print(
@@ -193,8 +198,11 @@ def p_type_print(p):
     p[0] = p[1]
     if(debug): print("P_type_print")
     
+def p_type_cond(p):
+    'type : cond'
+    p[0] = p[1]
+    if(debug): print("P_type_cond")
 # ----------------------------------------------------------------- ARIT -----------------------------------------------------------------
-
 def p_arit_sum(p):
     'arit : MAIS'
     p[0] = "ADD\n"
@@ -263,7 +271,6 @@ def p_func_define(p):
     funcs[p[2]] = startComment + p[3] + endComment # Armazenar o codigo da função
     if(debug): print("P_func_define, Função guardada")
     
-
 def p_func_call(p):
     'func : ID' 
     global funcs
@@ -280,7 +287,6 @@ def p_func_call(p):
     if(debug): print("P_func_call")
     
 # ----------------------------------------------------------------- STACK ----------------------------------------------------------------- 
-
 # DESATIVADO (Funcionamento incorreto)
 #def p_cont_pick(p):
 #    'cont : NUM PICK cont'
@@ -454,11 +460,10 @@ def p_print_cr(p):
     p[0] = "WRITELN \n"
     if(debug): print("P_print_cr")
 
+# Função utilizada esta definida no ficheiro funcoes.txt
 def p_print_spaces(p):
-    'print : NUM SPACES'
-    spaces_str = ""
-    for n in range(int(p[1])): spaces_str += " "  # Criar uma string com o numero de espaços pretendidos 
-    p[0] = f"PUSHS \"{spaces_str}\" \nWRITES \n" 
+    'print : SPACES'
+    p[0] = f"STOREG 0 \nPUSHA spaceloop \nCALL\n" 
     if(debug): print("P_print_spaces")
 
 # CUIDADO: Esta implementação do emit não irá transformar o int no caracter correspondente, 
@@ -469,6 +474,54 @@ def p_print_emit(p):
     vmCode = "STRI \nWRITES \n"
     p[0] = vmCode
     if(debug): print("P_print_emit")
+
+# ----------------------------------------------------------------- CONDS -----------------------------------------------------------------
+def p_cond_iet(p):
+    'cond : IF cont ELSE cont THEN' 
+    
+    # Contador para o numero de condicionais
+    global condCounter
+    id = str(condCounter) 
+
+    # Criação do nome das labels
+    labelIf = "if" + id; labelElse = "else" + id; labelThen = "then" + id
+
+    # Criação do codigo
+    chamada = f"PUSHA {labelIf} \nCALL \n"                                                                                          
+    conteudoIF = f"{labelIf}: \nPUSHFP \nLOAD -1 \nJZ {labelElse} \n{p[2]}JUMP {labelThen} \n"  
+    conteudoELSE = f"{labelElse}: \n{p[4]}JUMP {labelThen}\n" 
+    conteudoTHEN = f"{labelThen}: \n"
+
+    # Comentarios
+    startComment = f"//------ Condicional {id} ------ \n"
+    endComment   = f"//------------------------------ \n"
+
+    p[0] = startComment + chamada + '\n' + conteudoIF + '\n' + conteudoELSE + '\n' + conteudoTHEN + '\n' + endComment 
+    
+    if(debug): print("P_cond_iet")
+
+def p_cond_it(p):
+    'cond : IF cont THEN' 
+    
+    # Contador para o numero de condicionais
+    global condCounter
+    id = str(condCounter) 
+
+    # Criação do nome das labels
+    labelIf = "if" + id; labelThen = "then" + id
+
+    # Criação do codigo
+    chamada = f"PUSHA {labelIf} \nCALL \n"                                                                                          
+    conteudoIF = f"{labelIf}: \nPUSHFP \nLOAD -1 \nJUMP {labelThen} \n"  
+    conteudoTHEN = f"{labelThen}: \n"
+
+    # Comentarios
+    startComment = f"//------ Condicional {id} ------ \n"
+    endComment   = f"//------------------------------ \n"
+
+    p[0] = startComment + chamada + '\n' + conteudoIF + '\n' + conteudoTHEN + '\n' + endComment 
+    
+    if(debug): print("P_cond_it")
 
 #------------------------------- REGRAS PARA EMPTY -------------------------------
 def p_empty(p):

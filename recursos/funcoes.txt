@@ -50,3 +50,15 @@ vmAbs: // Retorna absoluto do 1 elem (ABS do forth)
 	return
 
 //---------------------------------------------------//
+spaceloop: // Printa o numero de espaços no topo da stack
+	pushg 0
+	pushi 1
+	sub
+	storeg 0
+	pushg 0
+	pushs " "
+	writes
+	not
+	jz spaceloop
+	return
+//---------------------------------------------------//
