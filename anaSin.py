@@ -19,12 +19,13 @@
 #  cont -> cont type
 #        | ε
 #
-#  type -> arit      -- operações aritmeticas
-#        | comment   -- comentarios
-#        | func      -- funções
-#        | stack     -- operações de stack
-#        | compare   -- operações de comparação
-#        | print     -- operações de print
+#  type -> arit      -- Operações aritmeticas
+#        | comment   -- Comentarios
+#        | func      -- Funções
+#        | stack     -- Operações de stack
+#        | input     -- Operações de input
+#        | compare   -- Operações de comparação
+#        | print     -- Operações de print
 #
 #  -------------------------------------------------------------------------------
 #
@@ -59,10 +60,14 @@
 #         | TUCK       -- Insere uma copia do primeiro elemento debaixo do segundo
 #         | NUM PICK   -- Faz uma copia do n-esimo elemento da stack
 #
+#  input -> KEY        -- Recebe como input um caracter/tecla e coloca no topo da stack.
+# 
 #  compare -> EQ       -- Retorna verdade se os dois valores no topo da stack forem iguais.
 #           | NEQ      -- Retorna verdade se os dois valores no topo da stack forem diferentes.
-#           | MENOR    -- Retorna verdade se o 2 valor no topo da stack for menor que o primeiro. Infixo: 10 < 2, Posfixo: 10 2 <.
-#           | MAIOR    -- Retorna verdade se o 2 valor no topo da stack for maior que o primeiro. Infixo: 10 > 2, Posfixo: 10 2 >.
+#           | MENOR    -- Retorna verdade se o 2 valor no topo da stack for menor que o primeiro. Nota: (Infixo: 10 < 2, Posfixo: 10 2 <).
+#           | MAIOR    -- Retorna verdade se o 2 valor no topo da stack for maior que o primeiro. Nota: (Infixo: 10 > 2, Posfixo: 10 2 >).
+#           | MENOREQ  -- Retorna verdade se o 2 valor no topo da stack for menor ou igual ao primeiro. Nota: (Infixo: 10 <= 2, Posfixo: 10 2 <=).
+#           | MAIOREQ  -- Retorna verdade se o 2 valor no topo da stack for maior ou igual ao primeiro. Nota: (Infixo: 10 >= 2, Posfixo: 10 2 >=).
 #           | ZEROEQ   -- Retorna verdade se o valor no topo da stack for igual de zero.
 #           | ZERONEQ  -- Retorna verdade se o valor no topo da stack for diferente de zero.
 #           | NEGATE   -- Nega o numero no topo da stack.
@@ -73,7 +78,7 @@
 #         | EMIT       -- Dá print ao caracter na primeira posição da stack, o caracter é representado em ascii. 
 #         | STRPRINT   -- Print a uma string
 #         | STRPRINT2  -- Print a uma string mas remove espaços consecutivos
-#         | NUM SPACES -- Print a uma determinada quantidade de espaços (Exige um numero antes que é verificado por gramatica).
+#         | SPACES     -- Print a uma determinada quantidade de espaços (O numero é o valor no topo da stack).
 #         | SPACE      -- Print a um espaço.
 #         | CR         -- Print a um new-line (\n).
 #
@@ -189,6 +194,11 @@ def p_type_stack(p):
     'type : stack'
     p[0] = p[1]
     if(debug): print("P_type_stack")
+
+def p_type_input(p):
+    'type : input'
+    p[0] = p[1]
+    if(debug): print("P_type_input")
 
 def p_type_compare(p):
     'type : compare'
@@ -385,6 +395,11 @@ def p_stack_tuck(p):
     vmCode = "DUP 1 \nSTOREG 0 \nSTOREG 2 \nSTOREG 1 \nPUSHG 0 \nPUSHG 1 \nPUSHG 2 \n"
     p[0] = vmCode
     if(debug): print("P_stack_tuck")
+# ----------------------------------------------------------------- INPUT -----------------------------------------------------------------
+def p_input_key(p):
+    'input : KEY' 
+    p[0] = "READ \nCHRCODE \n"
+    if(debug): print("P_input_key")
 
 # ----------------------------------------------------------------- COMPARE -----------------------------------------------------------------
 def p_compare_eq(p):
@@ -406,6 +421,16 @@ def p_compare_maior(p):
     'compare : MAIOR' 
     p[0] = "SUP \n"
     if(debug): print("P_compare_maior")
+
+def p_compare_menoreq(p):
+    'compare : MENOREQ' 
+    p[0] = "INFEQ \n"
+    if(debug): print("P_compare_menoreq")
+
+def p_compare_maioreq(p):
+    'compare : MAIOREQ' 
+    p[0] = "SUPEQ \n"
+    if(debug): print("P_compare_maioreq")
 
 def p_compare_zeroeq(p):
     'compare : ZEROEQ' 
@@ -505,8 +530,8 @@ def p_cond_iet(p):
     conteudoTHEN = f"{labelThen}: \n"
 
     # Comentarios
-    startComment = f"//------ Condicional {id} ------ \n"
-    endComment   = f"//------------------------------ \n"
+    startComment = f"// Condicional {id}\n"
+    endComment   = f"// Fim do condicional {id}\n"
 
     p[0] = startComment + chamada + '\n' + conteudoIF + '\n' + conteudoELSE + '\n' + conteudoTHEN + '\n' + endComment 
 
@@ -530,14 +555,16 @@ def p_cond_it(p):
     conteudoTHEN = f"{labelThen}: \n"
 
     # Comentarios
-    startComment = f"//------ Condicional {id} ------ \n"
-    endComment   = f"//------------------------------ \n"
+    startComment = f"// Condicional {id}\n"
+    endComment   = f"// Fim do condicional {id}\n"
 
     p[0] = startComment + chamada + '\n' + conteudoIF + '\n' + conteudoTHEN + '\n' + endComment 
 
     condCounter += 1
     
     if(debug): print("P_cond_it")
+
+# ----------------------------------------------------------------- INPUT -----------------------------------------------------------------
 
 #------------------------------- REGRAS PARA EMPTY -------------------------------
 def p_empty(p):

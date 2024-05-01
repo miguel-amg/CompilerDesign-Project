@@ -1,20 +1,4 @@
 //---------------- Funções do sistema ----------------//
-vmSoma: // Função de soma
-	pushfp
-	load -2
-	pushfp
-	load -1
-	add
-	return
-//---------------------------------------------------//
-vmSub: // Função de subtracao
-        pushfp
-        load -2
-        pushfp
-        load -1
-        sub
-        return
-//---------------------------------------------------//
 vmMinElse: // Função Continuação da vmMin
 	pushfp
 	load -1

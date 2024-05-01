@@ -69,10 +69,12 @@ tokens = (
     "ZEROMAIOR",  # 0>                   | Retorna verdade se o valor no topo da stack for maior que zero.
     "EQ",         # =                    | Retorna verdade se os dois valores no topo da stack forem iguais.
     "NEQ",        # <>                   | Retorna verdade se os dois valores no topo da stack forem diferentes.
-    "MENOR",      # <                    | Retorna verdade se o 2 valor no topo da stack for menor que o primeiro. Infixo: 10 < 2, Posfixo: 10 2 <.
-    "MAIOR",      # >                    | Retorna verdade se o 2 valor no topo da stack for maior que o primeiro. Infixo: 10 > 2, Posfixo: 10 2 >.
+    "MENOR",      # <                    | Retorna verdade se o 2 valor no topo da stack for menor que o primeiro. Nota: (Infixo: 10 < 2, Posfixo: 10 2 <).
+    "MAIOR",      # >                    | Retorna verdade se o 2 valor no topo da stack for maior que o primeiro. Nota: (Infixo: 10 > 2, Posfixo: 10 2 >).
+    "MENOREQ",    # <=                   | Retorna verdade se o 2 valor no topo da stack for menor ou igual ao primeiro. Nota: (Infixo: 10 <= 2, Posfixo: 10 2 <=).
+    "MAIOREQ",    # >=                   | Retorna verdade se o 2 valor no topo da stack for maior ou igual ao primeiro. Nota: (Infixo: 10 >= 2, Posfixo: 10 2 >=).
     "1SUM",       # 1+                   | Adiciona 1 ao valor no topo da stack.
-    "1SUB",       # 1-                   | Subtrai 1 ao valor no topo da stack.
+    "1SUB"        # 1-                   | Subtrai 1 ao valor no topo da stack.
     # ADICIONAR .( TXTXTX MOSTRAR DURANTE COMPILAÇÃO)
     # ADICIONAR /MOD
 ) + tuple(reserved.values())
@@ -97,6 +99,8 @@ t_EQ    = r'(?<!\S)=(?!\S)'
 t_NEQ   = r'(?<!\S)<>(?!\S)'
 t_MENOR = r'(?<!\S)<(?!\S)'
 t_MAIOR = r'(?<!\S)>(?!\S)'
+t_MENOREQ = r'(?<!\S)<=(?!\S)'
+t_MAIOREQ = r'(?<!\S)>=(?!\S)'
 t_2OVER = r'(?<!\S)(?i)2OVER(?!\S)'
 t_2SWAP = r'(?<!\S)(?i)2SWAP(?!\S)'
 t_2DUP  = r'(?<!\S)(?i)2DUP(?!\S)'
