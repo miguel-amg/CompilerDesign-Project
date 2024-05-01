@@ -37,9 +37,10 @@ reserved = {
    'MIN'    : 'MIN',    # min    | Retorna o menor dos dois valores no topo da stack.
    'MAX'    : 'MAX',    # max    | Retorna o maior dos dois valores no topo da stack.
    'ABS'    : 'ABS',    # abs    | Retorna o absoluto do valor no topo da stack.
-   'IF'     : 'IF',
-   'ELSE'   : 'ELSE',
-   'THEN'   : 'THEN'
+   'IF'     : 'IF',     # if     | Inicio de um bloco if.
+   'ELSE'   : 'ELSE',   # else   | Fim de um bloco if.
+   'THEN'   : 'THEN',   # then   | Fim de um bloco if.
+   'DEPTH'  : 'DEPTH',  # depth  | Retorna o numero de elementos na stack.
 }
 
 # Todos os tokens
@@ -69,10 +70,11 @@ tokens = (
     "EQ",         # =                    | Retorna verdade se os dois valores no topo da stack forem iguais.
     "NEQ",        # <>                   | Retorna verdade se os dois valores no topo da stack forem diferentes.
     "MENOR",      # <                    | Retorna verdade se o 2 valor no topo da stack for menor que o primeiro. Infixo: 10 < 2, Posfixo: 10 2 <.
-    "MAIOR"       # >                    | Retorna verdade se o 2 valor no topo da stack for maior que o primeiro. Infixo: 10 > 2, Posfixo: 10 2 >.
+    "MAIOR",      # >                    | Retorna verdade se o 2 valor no topo da stack for maior que o primeiro. Infixo: 10 > 2, Posfixo: 10 2 >.
+    "1SUM",       # 1+                   | Adiciona 1 ao valor no topo da stack.
+    "1SUB",       # 1-                   | Subtrai 1 ao valor no topo da stack.
     # ADICIONAR .( TXTXTX MOSTRAR DURANTE COMPILAÇÃO)
     # ADICIONAR /MOD
-    # ADICIONAR ABS
 ) + tuple(reserved.values())
 
 ######################## REGEX ########################
@@ -99,6 +101,8 @@ t_2OVER = r'(?<!\S)(?i)2OVER(?!\S)'
 t_2SWAP = r'(?<!\S)(?i)2SWAP(?!\S)'
 t_2DUP  = r'(?<!\S)(?i)2DUP(?!\S)'
 t_2DROP = r'(?<!\S)(?i)2DROP(?!\S)'
+t_1SUM  = r'(?<!\S)1\+(?!\S)'
+t_1SUB  = r'(?<!\S)1-(?!\S)'
 
 # Regra para os numeros
 def t_NUM(t):

@@ -1,4 +1,20 @@
 //---------------- Funções do sistema ----------------//
+vmSoma: // Função de soma
+	pushfp
+	load -2
+	pushfp
+	load -1
+	add
+	return
+//---------------------------------------------------//
+vmSub: // Função de subtracao
+        pushfp
+        load -2
+        pushfp
+        load -1
+        sub
+        return
+//---------------------------------------------------//
 vmMinElse: // Função Continuação da vmMin
 	pushfp
 	load -1
@@ -14,7 +30,6 @@ vmMin: // Retorna o menor valor (MIN do forth)
 	pushfp
 	load -2
 	return
-
 //---------------------------------------------------//
 vmMaxElse: // Função Continuação da vmMax
 	pushfp
@@ -50,7 +65,7 @@ vmAbs: // Retorna absoluto do 1 elem (ABS do forth)
 	return
 
 //---------------------------------------------------//
-spaceloop: // Printa o numero de espaços no topo da stack
+vmSpaceLoop: // Printa o numero de espaços no topo da stack
 	pushg 0
 	pushi 1
 	sub
@@ -59,6 +74,6 @@ spaceloop: // Printa o numero de espaços no topo da stack
 	pushs " "
 	writes
 	not
-	jz spaceloop
+	jz vmSpaceLoop
 	return
 //---------------------------------------------------//

@@ -34,6 +34,8 @@
 #        | DIV     -- Divisão 
 #        | MOD     -- Resto da divisão inteira
 #        | ABS     -- Retorna o absoluto do valor no topo da stack.
+#        | 1SUM    -- Soma 1 ao valor no topo da stack.
+#        | 1SUB    -- Subtrai 1 do valor no topo da stack.
 #
 #  comment -> COMMENT     -- Comentario
 #           | ENDCOMMENT  -- Comentario de linha
@@ -227,6 +229,16 @@ def p_arit_mod(p):
     'arit : MOD'
     p[0] = "MOD\n"
     if(debug): print("P_arit_mod")
+
+def p_arit_1sum(p):
+    'arit : 1SUM'
+    p[0] = "PUSHI 1 \nADD \n"
+    if(debug): print("P_arit_1sum")
+
+def p_arit_1sub(p):
+    'arit : 1SUB'
+    p[0] = "PUSHI 1 \nSUB \n"
+    if(debug): print("P_arit_1sub")
 
 # Explicação: Irá utilizar a função definida no ficheiro de funções vmAbs. Remove o valor inicial e deixa so o resultado.
 # Resultado: É inserido o absoluto do valor no topo da stack.
@@ -445,9 +457,10 @@ def p_print_strprint2(p):
     p[0] = f"PUSHS \"{p[1]}\" \nWRITES \n"
     if(debug): print("P_print_strprint2")
 
-def p_print_ponto(p):
+# Nota: O forth adiciona um espaço depois do print de cada numero
+def p_print_ponto(p): 
     'print : PONTO'
-    p[0] = "WRITEI\n"
+    p[0] = "WRITEI \nPUSHS \" \" \nWRITES \n"
     if(debug): print("P_print_ponto")
 
 def p_print_space(p):
@@ -463,7 +476,7 @@ def p_print_cr(p):
 # Função utilizada esta definida no ficheiro funcoes.txt
 def p_print_spaces(p):
     'print : SPACES'
-    p[0] = f"STOREG 0 \nPUSHA spaceloop \nCALL\n" 
+    p[0] = f"STOREG 0 \nPUSHA vmSpaceLoop \nCALL\n" 
     if(debug): print("P_print_spaces")
 
 # CUIDADO: Esta implementação do emit não irá transformar o int no caracter correspondente, 
@@ -471,8 +484,7 @@ def p_print_spaces(p):
 # , foi ponderada a criação de um função com uma grande quantidade de ifs para realizar a conversão.
 def p_print_emit(p):
     'print : EMIT' 
-    vmCode = "STRI \nWRITES \n"
-    p[0] = vmCode
+    p[0] = "WRITECHR \n"
     if(debug): print("P_print_emit")
 
 # ----------------------------------------------------------------- CONDS -----------------------------------------------------------------
@@ -487,8 +499,8 @@ def p_cond_iet(p):
     labelIf = "if" + id; labelElse = "else" + id; labelThen = "then" + id
 
     # Criação do codigo
-    chamada = f"PUSHA {labelIf} \nCALL \n"                                                                                          
-    conteudoIF = f"{labelIf}: \nPUSHFP \nLOAD -1 \nJZ {labelElse} \n{p[2]}JUMP {labelThen} \n"  
+    chamada = f"PUSHI 0 \nJZ {labelIf} \n"                                                                                          
+    conteudoIF = f"{labelIf}: \nJZ {labelElse} \n{p[2]}JUMP {labelThen} \n"  
     conteudoELSE = f"{labelElse}: \n{p[4]}JUMP {labelThen}\n" 
     conteudoTHEN = f"{labelThen}: \n"
 
@@ -497,6 +509,8 @@ def p_cond_iet(p):
     endComment   = f"//------------------------------ \n"
 
     p[0] = startComment + chamada + '\n' + conteudoIF + '\n' + conteudoELSE + '\n' + conteudoTHEN + '\n' + endComment 
+
+    condCounter += 1
     
     if(debug): print("P_cond_iet")
 
@@ -511,8 +525,8 @@ def p_cond_it(p):
     labelIf = "if" + id; labelThen = "then" + id
 
     # Criação do codigo
-    chamada = f"PUSHA {labelIf} \nCALL \n"                                                                                          
-    conteudoIF = f"{labelIf}: \nPUSHFP \nLOAD -1 \nJUMP {labelThen} \n"  
+    chamada = f"PUSHI 0 \nJZ {labelIf} \n"                                                                                          
+    conteudoIF = f"{labelIf}: \nJZ {labelThen} \n{p[2]} \nJUMP {labelThen} \n"  
     conteudoTHEN = f"{labelThen}: \n"
 
     # Comentarios
@@ -520,6 +534,8 @@ def p_cond_it(p):
     endComment   = f"//------------------------------ \n"
 
     p[0] = startComment + chamada + '\n' + conteudoIF + '\n' + conteudoTHEN + '\n' + endComment 
+
+    condCounter += 1
     
     if(debug): print("P_cond_it")
 

@@ -7,24 +7,65 @@ pushi 0
 pushi 0 
 
 start
-PUSHI 1
+PUSHI 77
+PUSHI 156
+// Função maior2
+DUP 1 
+STOREG 0 
+STOREG 1 
+DUP 1 
+STOREG 2 
+STOREG 3 
+PUSHG 2 
+PUSHG 0 
+PUSHG 3 
+PUSHG 1 
+SUP 
 //------ Condicional 0 ------ 
-PUSHA if0 
-CALL 
+PUSHI 0 
+JZ if0 
 
 if0: 
-PUSHFP 
-LOAD -1 
+JZ else0 
+SWAP
+WRITEI 
+PUSHS " " 
+WRITES 
+PUSHS "é o maior " 
+WRITES 
 JUMP then0 
+
+else0: 
+WRITEI 
+PUSHS " " 
+WRITES 
+PUSHS "é o maior " 
+WRITES 
+JUMP then0
 
 then0: 
 
 //------------------------------ 
-PUSHI 3
-WRITEI
+// Fim função maior2
 stop
 
 //---------------- Funções do sistema ----------------//
+vmSoma: // Função de soma
+	pushfp
+	load -2
+	pushfp
+	load -1
+	add
+	return
+//---------------------------------------------------//
+vmSub: // Função de subtracao
+        pushfp
+        load -2
+        pushfp
+        load -1
+        sub
+        return
+//---------------------------------------------------//
 vmMinElse: // Função Continuação da vmMin
 	pushfp
 	load -1
@@ -40,7 +81,6 @@ vmMin: // Retorna o menor valor (MIN do forth)
 	pushfp
 	load -2
 	return
-
 //---------------------------------------------------//
 vmMaxElse: // Função Continuação da vmMax
 	pushfp
@@ -76,7 +116,7 @@ vmAbs: // Retorna absoluto do 1 elem (ABS do forth)
 	return
 
 //---------------------------------------------------//
-spaceloop: // Printa o numero de espaços no topo da stack
+vmSpaceLoop: // Printa o numero de espaços no topo da stack
 	pushg 0
 	pushi 1
 	sub
@@ -85,6 +125,6 @@ spaceloop: // Printa o numero de espaços no topo da stack
 	pushs " "
 	writes
 	not
-	jz spaceloop
+	jz vmSpaceLoop
 	return
 //---------------------------------------------------//
