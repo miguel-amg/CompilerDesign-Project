@@ -1,0 +1,41 @@
+start
+pushi 10
+pushi 0
+
+pusha do
+call
+stop
+
+do:
+alloc 2
+pushfp 
+load -1 // Guardar counter
+store 0
+pushst 0
+pushfp
+load -2 // Guardar limite
+store 1
+
+pusha doLoop
+call
+return 
+
+doLoop:
+pushst 0 
+load 0 // Carregar counter
+pushst 0
+load 1 // Carregar limite
+inf
+jz endLoop
+pushst 0 
+pushst 0 
+load 0 // Carregar counter
+pushi 1
+add    
+store 0 // Store Counter++
+
+
+jump doLoop
+
+endLoop:
+return

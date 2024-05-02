@@ -26,6 +26,8 @@
 #        | input     -- Operações de input
 #        | compare   -- Operações de comparação
 #        | print     -- Operações de print
+#        | cond      -- Condicionais
+#        | cicle     -- Ciclos
 #
 #  -------------------------------------------------------------------------------
 #
@@ -45,7 +47,7 @@
 #        | ID                       -- Chamar função
 #
 #  stack -> NUM        -- Inserir num na stack 
-#         | CHAR LETRA -- Inserir letra na stack 
+#         | CHAR       -- Inserir letra na stack 
 #         | KEY        -- Recebe como input um caracter/tecla e coloca no topo da stack.
 #         | DROP       -- Retira o primeiro elem da stack
 #         | DUP        -- Duplicar valor na stack
@@ -326,8 +328,8 @@ def p_stack_dup(p):
     if(debug): print("P_stack_dup")
 
 def p_stack_letra(p):
-    'stack : CHAR LETRA'
-    p[0] = "PUSHI " + str(ord(p[2])) + '\n' # A letra tem de ser int na stack
+    'stack : CHARLETRA'
+    p[0] = "PUSHI " + str(ord(p[1])) + '\n' # A letra tem de ser int na stack
     if(debug): print("P_stack_letra")
 
 def p_stack_swap(p):
@@ -564,7 +566,11 @@ def p_cond_it(p):
     
     if(debug): print("P_cond_it")
 
-# ----------------------------------------------------------------- INPUT -----------------------------------------------------------------
+# ----------------------------------------------------------------- CICLE -----------------------------------------------------------------
+def p_cicle_counted(p):
+    'cicle : DO cont LETRA cont LOOP' 
+    p[0] = "WRITECHR \n"
+    if(debug): print("P_print_emit")
 
 #------------------------------- REGRAS PARA EMPTY -------------------------------
 def p_empty(p):

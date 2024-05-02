@@ -20,7 +20,6 @@ def removeEspacos(string):
 reserved = {
    'MOD'    : 'MOD',    # mod    | Resto da divisao inteira .
    'EMIT'   : 'EMIT',   # emit   | Dá print ao caracter na primeira posição da stack, o caracter é representado em ascii. 
-   'CHAR'   : 'CHAR',   # char   | Declarar um caracter.
    'DUP'    : 'DUP',    # dup    | Duplicar valor na stack.
    'SWAP'   : 'SWAP',   # swap   | Trocar os dois ultimos valores na stack.
    'DROP'   : 'DROP',   # drop   | Retira o primeiro elem da stack.
@@ -41,6 +40,9 @@ reserved = {
    'ELSE'   : 'ELSE',   # else   | Fim de um bloco if.
    'THEN'   : 'THEN',   # then   | Fim de um bloco if.
    'DEPTH'  : 'DEPTH',  # depth  | Retorna o numero de elementos na stack.
+   'DO'     : 'DO',     # do     | Inicio de um loop.
+   'LOOP'   : 'LOOP',   # loop   | Fim de um loop.
+   'I'      : 'I',      # i      | Valor do contador do loop.
 }
 
 # Todos os tokens
@@ -62,7 +64,6 @@ tokens = (
     "STRPRINT2",  # .( txttxtxtxt txtxt) | Realiza print ao texto entre parentesis e transforma espaços consecutivos em um só espaço.
     "COMMENT",    # ( txtxt txtxt)       | É um comentario.
     "ENDCOMMENT", # \ txtxtx             | É um comentario de linha.
-    "LETRA",      # A                    | Representa uma letra.
     "ZEROEQ",     # 0=                   | Retorna verdade se o valor no topo da stack for igual a zero.
     "ZERONEQ",    # 0<>                  | Retorna verdade se o valor no topo da stack for diferente de zero.
     "ZEROMENOR",  # 0<                   | Retorna verdade se o valor no topo da stack for menor que zero.
@@ -74,7 +75,8 @@ tokens = (
     "MENOREQ",    # <=                   | Retorna verdade se o 2 valor no topo da stack for menor ou igual ao primeiro. Nota: (Infixo: 10 <= 2, Posfixo: 10 2 <=).
     "MAIOREQ",    # >=                   | Retorna verdade se o 2 valor no topo da stack for maior ou igual ao primeiro. Nota: (Infixo: 10 >= 2, Posfixo: 10 2 >=).
     "1SUM",       # 1+                   | Adiciona 1 ao valor no topo da stack.
-    "1SUB"        # 1-                   | Subtrai 1 ao valor no topo da stack.
+    "1SUB",       # 1-                   | Subtrai 1 ao valor no topo da stack.
+    "CHARLETRA"   # char c               | Le um char seguido de uma letra.
     # ADICIONAR .( TXTXTX MOSTRAR DURANTE COMPILAÇÃO)
     # ADICIONAR /MOD
 ) + tuple(reserved.values())
@@ -90,7 +92,6 @@ t_COLON = r'(?<!\S)\:(?!\S)'  # Inicio de função
 t_SEMICOLON  = r'(?<!\S);(?!\S)'             # Fim de função
 t_COMMENT    = r'(?<!\S)\(\s[^\)]+\)(?!\S)'  # Comentario
 t_ENDCOMMENT = r'\\.+'                       # Comentario de linha
-t_LETRA      = r'(?<!\S)[A-Za-z](?!\S)'      # Regex para reconhecer uma única letra
 t_ZEROEQ     = r'(?<!\S)0=(?!\S)'
 t_ZERONEQ    = r'(?<!\S)0<>(?!\S)'
 t_ZEROMENOR  = r'(?<!\S)0<(?!\S)'
@@ -108,6 +109,11 @@ t_2DROP = r'(?<!\S)(?i)2DROP(?!\S)'
 t_1SUM  = r'(?<!\S)1\+(?!\S)'
 t_1SUB  = r'(?<!\S)1-(?!\S)'
 
+def t_CHARLETRA(t):
+    r'(?<!\S)char\s[A-Za-z](?!\S)'
+    t.value = t.value[5:] # O valor é a letra
+    return t
+
 # Regra para os numeros
 def t_NUM(t):
     r"(?<!\S)(\+|-)?\d+(?!\S)"
@@ -116,7 +122,7 @@ def t_NUM(t):
 
 # Nome de função
 def t_ID(t):
-    r'(?<!\S)[A-Za-z_][A-Za-z_0-9]+(?!\S)'
+    r'(?<!\S)[A-Za-z_][A-Za-z_0-9]*(?!\S)'
     t.type = reserved.get(t.value.upper(),'ID') # Verificar se leu uma palavra reservada sem querer, senão valor default = ID
     return t
 
