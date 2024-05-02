@@ -43,6 +43,7 @@ reserved = {
    'DO'     : 'DO',     # do     | Inicio de um loop.
    'LOOP'   : 'LOOP',   # loop   | Fim de um loop.
    'I'      : 'I',      # i      | Valor do contador do loop.
+   'VARIABLE': 'VARIABLE', # variable | Cria uma variavel.
 }
 
 # Todos os tokens
@@ -77,7 +78,9 @@ tokens = (
     "1SUM",       # 1+                   | Adiciona 1 ao valor no topo da stack.
     "1SUB",       # 1-                   | Subtrai 1 ao valor no topo da stack.
     "2DIV",       # 2/                   | Divide o valor no topo da stack por 2.
-    "CHARLETRA"   # char c               | Le um char seguido de uma letra.
+    "CHARLETRA",  # char c               | Le um char seguido de uma letra.
+    "FETCH",      # @                    | Retorna o valor de uma variavel.
+    "STORE",      # !                    | Guarda um valor numa variavel.
     # ADICIONAR .( TXTXTX MOSTRAR DURANTE COMPILAÇÃO)
     # ADICIONAR /MOD
 ) + tuple(reserved.values())
@@ -110,6 +113,8 @@ t_2DROP = r'(?<!\S)(?i)2DROP(?!\S)'
 t_1SUM  = r'(?<!\S)1\+(?!\S)'
 t_1SUB  = r'(?<!\S)1-(?!\S)'
 t_2DIV  = r'(?<!\S)2/(?!\S)'
+t_FETCH = r'(?<!\S)@(?!\S)'
+t_STORE = r'(?<!\S)!(?!\S)'
 
 def t_CHARLETRA(t):
     r'(?<!\S)char\s[A-Za-z](?!\S)'

@@ -29,6 +29,7 @@
 #        | print      -- Operações de print
 #        | cond       -- Condicionais
 #        | cicle      -- Ciclos
+#        | vars       -- Variaveis
 #
 #  ------------------------------------------------------------------------------   
 #  -- Secção -- Conteudo de uma função (Uma função não pode chamar outra função)
@@ -45,6 +46,7 @@
 #          | print      -- Operações de print
 #          | cond       -- Condicionais
 #          | cicle      -- Ciclos
+#          | vars       -- Variaveis
 #
 #  -------------------------------------------------------------------------------
 #
@@ -103,8 +105,15 @@
 #         | SPACE      -- Print a um espaço.
 #         | CR         -- Print a um new-line (\n).
 #
-#  cond -> IF cont ELSE cont THEN 
-#        | IF cont THEN cont 
+#  cond -> IF cont ELSE cont THEN  -- Ciclo com if else e then.
+#        | IF cont THEN cont       -- Ciclo com if e then.
+#
+#  cicle -> I             -- Obter valor do contador
+#         | DO cont LOOP  -- Ciclo 
+#
+#  vars -> VARIABLE ID    -- Criação de variaveis
+#        | ID FETCH       -- Obter valor de variavel
+#        | ID STORE       -- Guardar o valor de variavel
 #
 #################################### SETUP ####################################
 # Imports
@@ -129,6 +138,11 @@ funcs = {}                  # Armazenar o codigo das funções
 funcoesProtegidas = set()   # Contém os nomes de todas as funções do sistema. Utilizado para impedir repetições.
 condCounter = 0             # Contador para o numero de condições
 doCounter = 0               # Contador para o numero de ciclos
+vars = {}                   # Variaveis definidas pelo utilizador
+numVars = 0                 # Numero de variaveis definidas pelo utilizador
+
+# Valores hardcoded:
+memSys = 6  # Numero de pushi 0 a dar antes do start (Memoria para funções do sistema)
 
 #################################### BOAS-VINDAS ####################################
 print(
@@ -185,6 +199,20 @@ def tratarArgumentos(argumentos):
         else: raise Exception("Programa: Argumento com valor desconhecido!")    
     elif len(argumentos) > 2:
         raise Exception("Programa: Demasiados argumentos!")
+
+# Cria uma sequencia de pushi 0 dependendo do numero inserido 
+def criarMemoria(mem):
+    memoria = ""
+    for i in range(mem):
+        memoria += "PUSHI 0 \n"
+    return memoria
+
+# Cria uma sequencia de pushi 0 dependendo do numero inserido 
+def criarMemoriaVars(vars):
+    memoria = ""
+    for var in vars:
+        memoria += f"PUSHI 0 // Var {var}\n"
+    return memoria
 
 ####################################  CODIGO  ####################################
 # ---------------------------------- CONTEUDO ----------------------------------
@@ -250,6 +278,11 @@ def p_type_cicle(p):
     p[0] = p[1]
     if(debug): print("P_type_cicle")
 
+def p_type_vars(p):
+    'type : vars'
+    p[0] = p[1]
+    if(debug): print("P_type_vars")
+
 # ---------------------------------- CONTEUDO FUNC ----------------------------------
 # Conteudo regras
 def p_contfunc_op(p):
@@ -307,6 +340,11 @@ def p_cftype_cicle(p):
     'cftype : cicle'
     p[0] = p[1]
     if(debug): print("P_cftype_cicle")
+
+def p_cftype_vars(p):
+    'cftype : vars'
+    p[0] = p[1]
+    if(debug): print("P_cftype_vars")
 
 # ----------------------------------------------------------------- ARIT -----------------------------------------------------------------
 def p_arit_sum(p):
@@ -664,6 +702,12 @@ def p_cond_it(p):
     if(debug): print("P_cond_it")
 
 # ----------------------------------------------------------------- CICLE -----------------------------------------------------------------
+def p_cicle_counter(p):
+    'cicle : I'
+    p[0] = 'PUSHST 0 \nLOAD 0'
+    if(debug): print("P_cicle_counter")
+
+
 def p_cicle_counted(p):
     'cicle : DO cont LOOP'
 
@@ -709,6 +753,56 @@ jump doLoop{id}"""
     doCounter += 1
     if(debug): print("P_print_emit")
 
+# ----------------------------------------------------------------- VARIAVEIS -----------------------------------------------------------------
+def p_vars_variable(p):
+    'vars : VARIABLE ID'
+    global vars
+    global numVars
+    p[0] = ''
+
+    # Proteção de erros
+    if(p[2] in vars):
+        raise Exception(f"Erro de compilacao, variavel \"{p[2]}\" duplicada!")
+    if(p[2] in funcs):
+        raise Exception(f"Erro de compilacao, nome utilizado por função \"{p[2]}\"!")
+    if(p[2] in funcoesProtegidas):
+        raise Exception(f"Erro de compilacao, nome utilizado por função do sistema \"{p[2]}\"!")
+    
+    # Adicionar a variavel ao conjunto (Será dado o 'pushi 0' antes do start depois)
+    vars[p[2]] = {p[2] : numVars}
+
+    numVars += 1  
+
+    if(debug): print("P_vars_variable, Variavel guardada")
+
+def p_vars_fetch(p):
+    'vars : ID FETCH'
+    global vars
+    global numVars
+
+    # Proteção de erros
+    if(p[1] not in vars):
+        raise Exception(f"Erro de compilacao, variavel nao existe \"{p[2]}\"!")
+
+    valorStack = vars.get(p[1])[p[1]] + memSys # Obter a posição em que a variavel se encontra na VM
+    p[0] = f"PUSHG {valorStack} \n"
+
+    if(debug): print("P_vars_fetch")
+
+def p_vars_store(p):
+    'vars : ID STORE'
+    global vars
+    global numVars
+
+    # Proteção de erros
+    if(p[1] not in vars):
+        raise Exception(f"Erro de compilacao, variavel nao existe \"{p[2]}\"!")
+
+    valorStack = vars.get(p[1])[p[1]] + memSys # Obter a posição em que a variavel se encontra na VM
+    p[0] = f"STOREG {valorStack} \n"
+
+    if(debug): print("P_vars_store")
+
 #------------------------------- REGRAS PARA EMPTY -------------------------------
 def p_empty(p):
     'empty :'
@@ -739,7 +833,15 @@ parser = yacc.yacc()
 
 # Iterar o input
 result = parser.parse(sys.stdin.read())
-if(not debug): final = carregarTxt(ficheiroStart) + "\nstart\n" + result + "stop\n\n" + carregarTxt(ficheiroFuncoes)
+
+# Conteudo no inicio e fim do resultado final
+memoriaSistema = "// Memoria do sistema\n" + criarMemoria(memSys) + '\n'
+memoriaVariaveis = "// Memoria das variaveis\n" + criarMemoriaVars(vars)
+inicio =  memoriaSistema + memoriaVariaveis + "\nstart\n"
+fim = "stop\n\n" + carregarTxt(ficheiroFuncoes)
+
+# Construir resultado final
+if(not debug): final = inicio + result + fim
 if(debug): final = result # Em modo debug apenas é apresentado o conteudo do result
 
 # Obter resultado final e trata-lo

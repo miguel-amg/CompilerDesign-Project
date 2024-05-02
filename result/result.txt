@@ -1,15 +1,27 @@
-// Variáveis auxiliares (sistema)
-pushi 0
-pushi 0
-pushi 0 
-pushi 0 
-pushi 0 
-pushi 0 
+// Memoria do sistema
+PUSHI 0 
+PUSHI 0 
+PUSHI 0 
+PUSHI 0 
+PUSHI 0 
+PUSHI 0 
+
+// Memoria das variaveis
+PUSHI 0 // Var ola
+PUSHI 0 // Var ola2
 
 start
-PUSHI 10
-PUSHI 2 
-DIV 
+PUSHI 1
+PUSHI 2
+ADD
+STOREG 6 
+PUSHI 1
+PUSHI 3
+ADD
+STOREG 7 
+PUSHG 6 
+PUSHG 7 
+ADD
 WRITEI 
 PUSHS " " 
 WRITES 
