@@ -27,14 +27,15 @@ pushst 0
 load 1 // Carregar limite
 inf
 jz endLoop
+// Conteudo
+
+// Fim conteudo
 pushst 0 
 pushst 0 
 load 0 // Carregar counter
 pushi 1
 add    
 store 0 // Store Counter++
-
-
 jump doLoop
 
 endLoop:

@@ -76,6 +76,7 @@ tokens = (
     "MAIOREQ",    # >=                   | Retorna verdade se o 2 valor no topo da stack for maior ou igual ao primeiro. Nota: (Infixo: 10 >= 2, Posfixo: 10 2 >=).
     "1SUM",       # 1+                   | Adiciona 1 ao valor no topo da stack.
     "1SUB",       # 1-                   | Subtrai 1 ao valor no topo da stack.
+    "2DIV",       # 2/                   | Divide o valor no topo da stack por 2.
     "CHARLETRA"   # char c               | Le um char seguido de uma letra.
     # ADICIONAR .( TXTXTX MOSTRAR DURANTE COMPILAÇÃO)
     # ADICIONAR /MOD
@@ -108,6 +109,7 @@ t_2DUP  = r'(?<!\S)(?i)2DUP(?!\S)'
 t_2DROP = r'(?<!\S)(?i)2DROP(?!\S)'
 t_1SUM  = r'(?<!\S)1\+(?!\S)'
 t_1SUB  = r'(?<!\S)1-(?!\S)'
+t_2DIV  = r'(?<!\S)2/(?!\S)'
 
 def t_CHARLETRA(t):
     r'(?<!\S)char\s[A-Za-z](?!\S)'

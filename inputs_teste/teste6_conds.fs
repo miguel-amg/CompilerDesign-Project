@@ -12,3 +12,5 @@
 
 : func5 if if ." Sucesso5" CR else ." Falha5" CR then ." Sucesso5" CR then ." Sucesso5" CR ;
 1 1 func5
+
+if cont else cont then

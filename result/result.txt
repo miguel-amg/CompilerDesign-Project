@@ -1,1 +1,80 @@
-PUSHI 97
+// Variáveis auxiliares (sistema)
+pushi 0
+pushi 0
+pushi 0 
+pushi 0 
+pushi 0 
+pushi 0 
+
+start
+PUSHI 10
+PUSHI 2 
+DIV 
+WRITEI 
+PUSHS " " 
+WRITES 
+stop
+
+//---------------- Funções do sistema ----------------//
+vmMinElse: // Função Continuação da vmMin
+	pushfp
+	load -1
+	return
+
+vmMin: // Retorna o menor valor (MIN do forth)
+	pushfp
+	load -2
+	pushfp
+	load -1
+	inf
+	jz vmMinElse
+	pushfp
+	load -2
+	return
+//---------------------------------------------------//
+vmMaxElse: // Função Continuação da vmMax
+	pushfp
+	load -1
+	return
+
+vmMax: // Retorna o maior valor (MAX do forth)
+	pushfp
+	load -2
+	pushfp
+	load -1
+	sup
+	jz vmMaxElse
+	pushfp
+	load -2
+	return
+//---------------------------------------------------//
+vmAbsElse: // Função continuação do vmAbs (Valor <0)
+	pushfp
+	load -1	
+	pushi -1
+	mul
+	return
+
+vmAbs: // Retorna absoluto do 1 elem (ABS do forth)
+	pushfp
+	load -1
+	pushi 0
+	sup
+	jz vmAbsElse // O valor é <0
+	pushfp
+	load -1
+	return
+
+//---------------------------------------------------//
+vmSpaceLoop: // Printa o numero de espaços no topo da stack
+	pushg 0
+	pushi 1
+	sub
+	storeg 0
+	pushg 0
+	pushs " "
+	writes
+	not
+	jz vmSpaceLoop
+	return
+//---------------------------------------------------//

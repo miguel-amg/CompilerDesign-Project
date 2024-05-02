@@ -19,15 +19,32 @@
 #  cont -> cont type
 #        | ε
 #
-#  type -> arit      -- Operações aritmeticas
-#        | comment   -- Comentarios
-#        | func      -- Funções
-#        | stack     -- Operações de stack
-#        | input     -- Operações de input
-#        | compare   -- Operações de comparação
-#        | print     -- Operações de print
-#        | cond      -- Condicionais
-#        | cicle     -- Ciclos
+#  type -> arit       -- Operações aritmeticas
+#        | comment    -- Comentarios
+#        | createfunc -- Definição de funções
+#        | callfunc   -- Chamada de funções
+#        | stack      -- Operações de stack
+#        | input      -- Operações de input
+#        | compare    -- Operações de comparação
+#        | print      -- Operações de print
+#        | cond       -- Condicionais
+#        | cicle      -- Ciclos
+#
+#  ------------------------------------------------------------------------------   
+#  -- Secção -- Conteudo de uma função (Uma função não pode chamar outra função)
+#
+#  contfunc -> contfunc cftype 
+#            | ε
+#
+#  cftype -> arit       -- Operações aritmeticas
+#          | comment    -- Comentarios
+#          | callfunc   -- Chamada de funções
+#          | stack      -- Operações de stack
+#          | input      -- Operações de input
+#          | compare    -- Operações de comparação
+#          | print      -- Operações de print
+#          | cond       -- Condicionais
+#          | cicle      -- Ciclos
 #
 #  -------------------------------------------------------------------------------
 #
@@ -39,12 +56,14 @@
 #        | ABS     -- Retorna o absoluto do valor no topo da stack.
 #        | 1SUM    -- Soma 1 ao valor no topo da stack.
 #        | 1SUB    -- Subtrai 1 do valor no topo da stack.
+#        | 2DIV    -- Divide o valor no topo da stack por 2.
 #
 #  comment -> COMMENT     -- Comentario
 #           | ENDCOMMENT  -- Comentario de linha
 #
-#  func -> COLON ID cont SEMICOLON  -- Definir função
-#        | ID                       -- Chamar função
+#  createfunc -> COLON ID contfunc SEMICOLON  -- Definir função
+#
+#  callfunc -> ID  -- Chamar função
 #
 #  stack -> NUM        -- Inserir num na stack 
 #         | CHAR       -- Inserir letra na stack 
@@ -86,6 +105,7 @@
 #
 #  cond -> IF cont ELSE cont THEN 
 #        | IF cont THEN cont 
+#
 #################################### SETUP ####################################
 # Imports
 from anaLex import tokens
@@ -98,14 +118,17 @@ import re
 global debug             # (Valor é alterado pela função tratarArgumentos)
 global funcoesProtegidas # (Valor é alterado pela função carregarFuncoesProtegidas) 
 global condCounter       # Contador para o numero de condições
+global doCounter         # Contador para o numero de ciclos
 
 localResultado  = "result"                # Pasta para os resultados
 ficheiroStart   = "recursos/start.txt"    # Ficheiro com o inicio do codigo
 ficheiroFuncoes = "recursos/funcoes.txt"  # Ficheiro as funções utilizadas na vm
-debug = False  # Modo debug ativo ou inativo (Inativo por predefinição)
-funcs = {}     # Armazenar o codigo das funções
-funcoesProtegidas = set() # Contém os nomes de todas as funções do sistema. Utilizado para impedir repetições.
-condCounter = 0 # Contador para o numero de condições
+
+debug = False               # Modo debug ativo ou inativo (Inativo por predefinição)
+funcs = {}                  # Armazenar o codigo das funções
+funcoesProtegidas = set()   # Contém os nomes de todas as funções do sistema. Utilizado para impedir repetições.
+condCounter = 0             # Contador para o numero de condições
+doCounter = 0               # Contador para o numero de ciclos
 
 #################################### BOAS-VINDAS ####################################
 print(
@@ -187,10 +210,15 @@ def p_type_comment(p):
     p[0] = p[1]
     if(debug): print("P_type_comment")
 
-def p_type_func(p):
-    'type : func'
+def p_type_createfunc(p):
+    'type : createfunc'
     p[0] = p[1]
-    if(debug): print("P_type_func")
+    if(debug): print("P_type_createfunc")
+
+def p_type_callfunc(p):
+    'type : callfunc'
+    p[0] = p[1]
+    if(debug): print("P_type_callfunc")
 
 def p_type_stack(p):
     'type : stack'
@@ -216,6 +244,70 @@ def p_type_cond(p):
     'type : cond'
     p[0] = p[1]
     if(debug): print("P_type_cond")
+
+def p_type_cicle(p):
+    'type : cicle'
+    p[0] = p[1]
+    if(debug): print("P_type_cicle")
+
+# ---------------------------------- CONTEUDO FUNC ----------------------------------
+# Conteudo regras
+def p_contfunc_op(p):
+    'contfunc : contfunc cftype'
+    p[0] = p[1] + p[2]
+    if(debug): print("P_contfunc_op")
+
+def p_contfunc_empty(p):
+    'contfunc : empty'
+    p[0] = ''
+    if(debug): print("P_contfunc_empty")
+
+# ---------------------------------- TYPE ----------------------------------
+def p_cftype_arit(p):
+    'cftype : arit'
+    p[0] = p[1]
+    if(debug): print("P_cftype_arit")
+
+def p_cftype_comment(p):
+    'cftype : comment'
+    p[0] = p[1]
+    if(debug): print("P_cftype_comment")
+
+def p_cftype_callfunc(p):
+    'cftype : callfunc'
+    p[0] = p[1]
+    if(debug): print("P_cftype_callfunc")
+
+def p_cftype_stack(p):
+    'cftype : stack'
+    p[0] = p[1]
+    if(debug): print("P_cftype_stack")
+
+def p_cftype_input(p):
+    'cftype : input'
+    p[0] = p[1]
+    if(debug): print("P_cftype_input")
+
+def p_cftype_compare(p):
+    'cftype : compare'
+    p[0] = p[1]
+    if(debug): print("P_cftype_compare")
+
+def p_cftype_print(p):
+    'cftype : print'
+    p[0] = p[1]
+    if(debug): print("P_cftype_print")
+    
+def p_cftype_cond(p):
+    'cftype : cond'
+    p[0] = p[1]
+    if(debug): print("P_cftype_cond")
+
+def p_cftype_cicle(p):
+    'cftype : cicle'
+    p[0] = p[1]
+    if(debug): print("P_cftype_cicle")
+
 # ----------------------------------------------------------------- ARIT -----------------------------------------------------------------
 def p_arit_sum(p):
     'arit : MAIS'
@@ -259,6 +351,10 @@ def p_arit_abs(p):
     p[0] = "// Função ABS (sistema) \nPUSHA vmAbs \nCALL \nSWAP \nPOP 1 \n// Fim Função ABS (sistema) \n"
     if(debug): print("P_arit_abs")
 
+def p_arit_2div(p):
+    'arit : 2DIV'
+    p[0] = "PUSHI 2 \nDIV \n"
+    if(debug): print("P_arit_2div")
     
 # ----------------------------------------------------------------- COMMENT ----------------------------------------------------------------- 
 def p_comment_one(p):
@@ -271,10 +367,10 @@ def p_op_endcomment(p):
     p[0] = '' 
     if(debug): print("P_comment_endcomment")
 
-# ----------------------------------------------------------------- FUNC -----------------------------------------------------------------
+# ----------------------------------------------------------------- CREATEFUNC -----------------------------------------------------------------
 # Quando uma função é definida o seu codigo é armazenado para quando for chamada ser inserido diretamente
-def p_func_define(p):
-    'func : COLON ID cont SEMICOLON'
+def p_createfunc(p):
+    'createfunc : COLON ID contfunc SEMICOLON'
 
     p[0] = ''
     global funcs, funcoesProtegidas
@@ -293,10 +389,11 @@ def p_func_define(p):
 
     # Armazenar o codigo da função
     funcs[p[2]] = startComment + p[3] + endComment # Armazenar o codigo da função
-    if(debug): print("P_func_define, Função guardada")
+    if(debug): print("P_createfunc, Função guardada")
     
-def p_func_call(p):
-    'func : ID' 
+# ----------------------------------------------------------------- CALLFUNC -----------------------------------------------------------------
+def p_callfunc(p):
+    'callfunc : ID' 
     global funcs
 
     print(str(funcs))
@@ -308,7 +405,7 @@ def p_func_call(p):
         # Se não estiver definida, gere uma mensagem de erro
         raise Exception(f"Erro de compilacao, identificador de função desconhecido \"{p[1]}\".")
     
-    if(debug): print("P_func_call")
+    if(debug): print("P_callfunc")
     
 # ----------------------------------------------------------------- STACK ----------------------------------------------------------------- 
 # DESATIVADO (Funcionamento incorreto)
@@ -568,8 +665,48 @@ def p_cond_it(p):
 
 # ----------------------------------------------------------------- CICLE -----------------------------------------------------------------
 def p_cicle_counted(p):
-    'cicle : DO cont LETRA cont LOOP' 
-    p[0] = "WRITECHR \n"
+    'cicle : DO cont LOOP'
+
+    global doCounter
+    id = str(doCounter)
+    
+    chamada = f"PUSHA do{id} \nCALL"
+    preparacao = f"""
+do{id}: 
+ALLOC 2 
+PUSHFP  
+LOAD -1 // Guardar counter 
+STORE 0 
+PUSHST 0 
+PUSHFP 
+LOAD -2 // Guardar limite 
+STORE 1 
+PUSHA doLoop{id} 
+CALL 
+RETURN """
+    
+    ciclo = f"""
+doLoop{id}:
+pushst 0 
+load 0 // Carregar counter
+pushst 0
+load 1 // Carregar limite
+inf
+jz endLoop{id}
+// Conteudo\n{p[2]}// Fim conteudo
+pushst 0 
+pushst 0 
+load 0 // Carregar counter
+pushi 1
+add    
+store 0 // Store Counter++
+jump doLoop{id}"""
+    
+    fimcicle = f"endLoop{id}: \n"
+
+    p[0] = chamada + '\n' + preparacao + '\n' + ciclo + '\n' + fimcicle
+
+    doCounter += 1
     if(debug): print("P_print_emit")
 
 #------------------------------- REGRAS PARA EMPTY -------------------------------
