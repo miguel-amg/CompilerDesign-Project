@@ -1,16 +1,21 @@
 Documento para ajuda no desenvolvimento do projeto.
 
-Recursos:
+------------------------------------------------------------------------
+Documentação fornecida pelo professor:
+
 Documentação forth: https://www.forth.com/starting-forth/
 IDE de testes forth: https://www.jdoodle.com/execute-forth-online
 VM para forth: https://ewvm.epl.di.uminho.pt
 
-Requisitos:  
-- Suporte a todas as expressões aritméticas: soma, adição, subtração, divisão, resto da divisão inteira, potência, agrupamento e prioridade com parêntesis curvos
-- Suporte à criação de funções
-- Suporte ao printde carateres e strings (., ." string", emit, char)
-- Suporte a condicionais
-- Suporte a ciclos
-- Suporte a variáveis
-- ...
+------------------------------------------------------------------------
+Documentação adicional encontrada pelo grupo:
 
+Forth:
+https://www.complang.tuwien.ac.at/forth/gforth/Docs-html/
+https://vfxforth.com/arena/ProgramForth.pdf
+https://gforth.org/manual/
+
+Maquina virtual:
+https://github.com/jcramalho/EWVM/
+
+------------------------------------------------------------------------

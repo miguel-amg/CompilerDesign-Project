@@ -69,7 +69,6 @@
 #
 #  stack -> NUM        -- Inserir num na stack 
 #         | CHAR       -- Inserir letra na stack 
-#         | KEY        -- Recebe como input um caracter/tecla e coloca no topo da stack.
 #         | DROP       -- Retira o primeiro elem da stack
 #         | DUP        -- Duplicar valor na stack
 #         | SWAP       -- Da swap aos dois ultimos elems 
@@ -81,21 +80,23 @@
 #         | 2SWAP      -- Troca os dois pares no topo da stack 
 #         | 2OVER      -- Copiar o 2o par no topo da stack e colar no topo da stack
 #         | TUCK       -- Insere uma copia do primeiro elemento debaixo do segundo
-#         | NUM PICK   -- Faz uma copia do n-esimo elemento da stack
+#         | NUM PICK (DESATIVADO) -- Faz uma copia do n-esimo elemento da stack
 #
 #  input -> KEY        -- Recebe como input um caracter/tecla e coloca no topo da stack.
 # 
-#  compare -> EQ       -- Retorna verdade se os dois valores no topo da stack forem iguais.
-#           | NEQ      -- Retorna verdade se os dois valores no topo da stack forem diferentes.
-#           | MENOR    -- Retorna verdade se o 2 valor no topo da stack for menor que o primeiro. Nota: (Infixo: 10 < 2, Posfixo: 10 2 <).
-#           | MAIOR    -- Retorna verdade se o 2 valor no topo da stack for maior que o primeiro. Nota: (Infixo: 10 > 2, Posfixo: 10 2 >).
-#           | MENOREQ  -- Retorna verdade se o 2 valor no topo da stack for menor ou igual ao primeiro. Nota: (Infixo: 10 <= 2, Posfixo: 10 2 <=).
-#           | MAIOREQ  -- Retorna verdade se o 2 valor no topo da stack for maior ou igual ao primeiro. Nota: (Infixo: 10 >= 2, Posfixo: 10 2 >=).
-#           | ZEROEQ   -- Retorna verdade se o valor no topo da stack for igual de zero.
-#           | ZERONEQ  -- Retorna verdade se o valor no topo da stack for diferente de zero.
-#           | NEGATE   -- Nega o numero no topo da stack.
-#           | MIN      -- Retorna o menor dos dois valores no topo da stack.
-#           | MAX      -- Retorna o maior dos dois valores no topo da stack.
+#  compare -> EQ         -- Retorna verdade se os dois valores no topo da stack forem iguais.
+#           | NEQ        -- Retorna verdade se os dois valores no topo da stack forem diferentes.
+#           | MENOR      -- Retorna verdade se o 2 valor no topo da stack for menor que o primeiro. Nota: (Infixo: 10 < 2, Posfixo: 10 2 <).
+#           | MAIOR      -- Retorna verdade se o 2 valor no topo da stack for maior que o primeiro. Nota: (Infixo: 10 > 2, Posfixo: 10 2 >).
+#           | MENOREQ    -- Retorna verdade se o 2 valor no topo da stack for menor ou igual ao primeiro. Nota: (Infixo: 10 <= 2, Posfixo: 10 2 <=).
+#           | MAIOREQ    -- Retorna verdade se o 2 valor no topo da stack for maior ou igual ao primeiro. Nota: (Infixo: 10 >= 2, Posfixo: 10 2 >=).
+#           | ZEROEQ     -- Retorna verdade se o valor no topo da stack for igual de zero.
+#           | ZERONEQ    -- Retorna verdade se o valor no topo da stack for diferente de zero.
+#           | ZEROMENOR  -- Retorna verdade se o valor no topo da stack for igual ou menor que zero.
+#           | ZEROMAIOR  -- Retorna verdade se o valor no topo da stack for igual ou maior que zero.
+#           | NEGATE     -- Nega o numero no topo da stack.
+#           | MIN        -- Retorna o menor dos dois valores no topo da stack.
+#           | MAX        -- Retorna o maior dos dois valores no topo da stack.
 #
 #  print -> PONTO      -- Print do elemento no topo da stack
 #         | EMIT       -- Dá print ao caracter na primeira posição da stack, o caracter é representado em ascii. 
@@ -105,8 +106,8 @@
 #         | SPACE      -- Print a um espaço.
 #         | CR         -- Print a um new-line (\n).
 #
-#  cond -> IF cont ELSE cont THEN  -- Ciclo com if else e then.
-#        | IF cont THEN cont       -- Ciclo com if e then.
+#  cond -> IF cont ELSE cont THEN  -- Condicional com if else e then.
+#        | IF cont THEN cont       -- Condicional com if e then.
 #
 #  cicle -> I             -- Obter valor do contador
 #         | DO cont LOOP  -- Ciclo 
@@ -124,13 +125,12 @@ import os
 import re
 
 # Variáveis 
-global debug             # (Valor é alterado pela função tratarArgumentos)
-global funcoesProtegidas # (Valor é alterado pela função carregarFuncoesProtegidas) 
+global debug             # (Valor é carregado pela função tratarArgumentos)
+global funcoesProtegidas # (Valor é carregado pela função carregarFuncoesProtegidas) 
 global condCounter       # Contador para o numero de condições
 global doCounter         # Contador para o numero de ciclos
 
 localResultado  = "result"                # Pasta para os resultados
-ficheiroStart   = "recursos/start.txt"    # Ficheiro com o inicio do codigo
 ficheiroFuncoes = "recursos/funcoes.txt"  # Ficheiro as funções utilizadas na vm
 
 debug = False               # Modo debug ativo ou inativo (Inativo por predefinição)
@@ -142,8 +142,10 @@ vars = {}                   # Variaveis definidas pelo utilizador
 numVars = 0                 # Numero de variaveis definidas pelo utilizador
 
 # Valores hardcoded:
-memSys = 6  # Numero de pushi 0 a dar antes do start (Memoria para funções do sistema)
+memSys = 7  # Numero de pushi 0 a dar antes do start 
+# (A 7 posição é utilizada para saber o numero de frames para os ciclos as restantes são utilizadas nas funções do sistema)
 
+#ficheiroStart   = "recursos/start.txt"    # Ficheiro com o inicio do codigo (NAO UTILIZADO)
 #################################### BOAS-VINDAS ####################################
 print(
 """-------------------------------------
@@ -704,7 +706,7 @@ def p_cond_it(p):
 # ----------------------------------------------------------------- CICLE -----------------------------------------------------------------
 def p_cicle_counter(p):
     'cicle : I'
-    p[0] = 'PUSHST 0 \nLOAD 0'
+    p[0] = 'PUSHG 6 \n'
     if(debug): print("P_cicle_counter")
 
 
@@ -721,7 +723,7 @@ ALLOC 2
 PUSHFP  
 LOAD -1 // Guardar counter 
 STORE 0 
-PUSHST 0 
+PUSHST {id} 
 PUSHFP 
 LOAD -2 // Guardar limite 
 STORE 1 
@@ -731,20 +733,22 @@ RETURN """
     
     ciclo = f"""
 doLoop{id}:
-pushst 0 
-load 0 // Carregar counter
-pushst 0
-load 1 // Carregar limite
-inf
-jz endLoop{id}
+PUSHST {id}
+LOAD 0 // Carregar counter
+DUP 1 
+STOREG 6 // Armazenar valor atual do contador para o I conseguir ler 
+PUSHST {id}
+LOAD 1 // Carregar limite
+INF
+JZ endLoop{id}
 // Conteudo\n{p[2]}// Fim conteudo
-pushst 0 
-pushst 0 
-load 0 // Carregar counter
-pushi 1
-add    
-store 0 // Store Counter++
-jump doLoop{id}"""
+PUSHST {id}
+PUSHST {id}
+LOAD 0 // Carregar counter
+PUSHI 1
+ADD  
+STORE 0 // Store Counter++
+JUMP doLoop{id}"""
     
     fimcicle = f"endLoop{id}: \n"
 
@@ -823,6 +827,9 @@ tratarArgumentos(argumentos)
 
 # Inicio
 if(debug): print("MODO DEBUG ATIVO:")
+if(debug): print("Memoria para o sistema: " + str(memSys))
+if(debug): print("Pasta de resultados: " + localResultado)
+if(debug): print("Ficheiro com funções do sistema: " + ficheiroFuncoes)
 
 # Proteger o utilizador de criar funçoes com o mesmo nome das do sistema
 funcoesProtegidas = carregarFuncProtegidas(ficheiroFuncoes)
@@ -841,8 +848,7 @@ inicio =  memoriaSistema + memoriaVariaveis + "\nstart\n"
 fim = "stop\n\n" + carregarTxt(ficheiroFuncoes)
 
 # Construir resultado final
-if(not debug): final = inicio + result + fim
-if(debug): final = result # Em modo debug apenas é apresentado o conteudo do result
+final = inicio + result + fim
 
 # Obter resultado final e trata-lo
 print()
