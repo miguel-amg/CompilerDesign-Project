@@ -1,2 +1,4 @@
-10 0 do ." ola" I . loop 
-5 0 do ." adeus" I . loop
+1 0 = 
+IF ." É zero! (Falha)" CR
+ELSE ." Não é zero! (Sucesso)" CR
+THEN ." Finish" CR

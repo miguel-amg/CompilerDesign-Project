@@ -10,92 +10,32 @@ PUSHI 0
 // Memoria das variaveis
 
 start
-PUSHI 10
-PUSHI 0
-PUSHA do0 
-CALL
-
-do0: 
-ALLOC 2 
-PUSHFP  
-LOAD -1 // Guardar counter 
-STORE 0 
-PUSHST 0 
-PUSHFP 
-LOAD -2 // Guardar limite 
-STORE 1 
-PUSHA doLoop0 
-CALL 
-RETURN 
-
-doLoop0:
-PUSHST 0
-LOAD 0 // Carregar counter
-DUP 1 
-STOREG 6 // Armazenar valor atual do contador para o I conseguir ler 
-PUSHST 0
-LOAD 1 // Carregar limite
-INF
-JZ endLoop0
-// Conteudo
-PUSHS "ola" 
-WRITES 
-PUSHG 6 
-WRITEI 
-PUSHS " " 
-WRITES 
-// Fim conteudo
-PUSHST 0
-PUSHST 0
-LOAD 0 // Carregar counter
 PUSHI 1
-ADD  
-STORE 0 // Store Counter++
-JUMP doLoop0
-endLoop0: 
-PUSHI 5
 PUSHI 0
-PUSHA do1 
-CALL
+EQUAL 
+// Condicional 0
+PUSHI 0 
+JZ if0 
 
-do1: 
-ALLOC 2 
-PUSHFP  
-LOAD -1 // Guardar counter 
-STORE 0 
-PUSHST 1 
-PUSHFP 
-LOAD -2 // Guardar limite 
-STORE 1 
-PUSHA doLoop1 
-CALL 
-RETURN 
+if0: 
+JZ else0 
+PUSHS "É zero! (Falha)" 
+WRITES 
+WRITELN 
+JUMP then0 
 
-doLoop1:
-PUSHST 1
-LOAD 0 // Carregar counter
-DUP 1 
-STOREG 6 // Armazenar valor atual do contador para o I conseguir ler 
-PUSHST 1
-LOAD 1 // Carregar limite
-INF
-JZ endLoop1
-// Conteudo
-PUSHS "adeus" 
+else0: 
+PUSHS "Não é zero! (Sucesso)" 
 WRITES 
-PUSHG 6 
-WRITEI 
-PUSHS " " 
+WRITELN 
+JUMP then0
+
+then0: 
+
+// Fim do condicional 0
+PUSHS "Finish" 
 WRITES 
-// Fim conteudo
-PUSHST 1
-PUSHST 1
-LOAD 0 // Carregar counter
-PUSHI 1
-ADD  
-STORE 0 // Store Counter++
-JUMP doLoop1
-endLoop1: 
+WRITELN 
 stop
 
 //---------------- Funções do sistema ----------------//
