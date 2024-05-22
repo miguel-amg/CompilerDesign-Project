@@ -64,7 +64,7 @@
 #           | ENDCOMMENT  -- Comentario de linha
 #
 #  createfunc -> COLON ID contfunc SEMICOLON  -- Definir função
-#
+# 
 #  callfunc -> ID  -- Chamar função
 #
 #  stack -> NUM        -- Inserir num na stack 
@@ -374,7 +374,7 @@ def p_arit_mod(p):
     p[0] = "MOD\n"
     if(debug): print("P_arit_mod")
 
-def p_arit_1sum(p):
+def p_arit_1sum(p): 
     'arit : 1SUM'
     p[0] = "PUSHI 1 \nADD \n"
     if(debug): print("P_arit_1sum")
@@ -421,7 +421,7 @@ def p_createfunc(p):
     
     # Impedir que o utilizador use função com nome de função do sistema
     if(p[2] in funcoesProtegidas): 
-        raise Exception(f"Erro de compilacao, nome \"{p[2]}\" utilizado por funcao do sistema! \nFunções utilizadas pelo sistema: {funcoesProtegidas}")
+        raise Exception(f"Erro de compilacao, nome \"{p[2]}\" utilizado por funcao do sistema! \nFunçes utilizadas pelo sistema: {funcoesProtegidas}")
 
     # Comentarios para identificar as funções
     startComment = '// Função ' + p[2] + '\n'
@@ -546,7 +546,7 @@ def p_compare_eq(p):
     p[0] = "EQUAL \n"
     if(debug): print("P_compare_eq")
 
-def p_compare_neq(p):
+def p_compare_neq(p): 
     'compare : NEQ' 
     p[0] = "EQUAL \nPUSHI 0 \nEQUAL \n"
     if(debug): print("P_compare_neq")

@@ -114,7 +114,7 @@ t_1SUM  = r'(?<!\S)1\+(?!\S)'
 t_1SUB  = r'(?<!\S)1-(?!\S)'
 t_2DIV  = r'(?<!\S)2/(?!\S)'
 t_FETCH = r'(?<!\S)@(?!\S)'
-t_STORE = r'(?<!\S)!(?!\S)'
+t_STORE = r'(?<!\S)!(?!\S)'                                       
 
 def t_CHARLETRA(t):
     r'(?<!\S)char\s[A-Za-z](?!\S)'
