@@ -10,48 +10,6 @@ PUSHI 0
 // Memoria das variaveis
 
 start
-PUSHI 1
-PUSHI 1
-// Função func5
-// Condicional 1
-PUSHI 0 
-JZ if1 
-
-if1: 
-JZ then1 
-// Condicional 0
-PUSHI 0 
-JZ if0 
-
-if0: 
-JZ else0 
-PUSHS "Sucesso5" 
-WRITES 
-WRITELN 
-JUMP then0 
-
-else0: 
-PUSHS "Falha5" 
-WRITES 
-WRITELN 
-JUMP then0
-
-then0: 
-
-// Fim do condicional 0
-PUSHS "Sucesso5" 
-WRITES 
-WRITELN 
- 
-JUMP then1 
-
-then1: 
-
-// Fim do condicional 1
-PUSHS "Sucesso5" 
-WRITES 
-WRITELN 
-// Fim função func5
 stop
 
 //---------------- Funções do sistema ----------------//

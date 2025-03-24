@@ -1,21 +1,22 @@
-# Processamento de linguagens 2024
-**Trabalho Prático:** Compilador forth
+# Compiler Design 
 
-**Descrição:** Neste projeto final da UC Processamento de Linguagens, deverá ser implementado um compilador de Forth que deverá gerar código para a máquina virtual criada no contexto desta UC.
+**Authors:** Leonardo Barroso [(Github)](https://github.com/Leonardo-flb), Miguel Guimarães [(Github)](https://github.com/miguel-amg), Pedro Carneiro [(Github)](https://github.com/PedroCarneiro03).
 
-**Tarefas:**
-Suporte a todas as expressões aritméticas: soma, adição, subtração, divisão, resto da divisão inteira, potência, agrupamento e prioridade com parêntesis curvos
-- Suporte à criação de funções
-- Suporte ao printde carateres e strings (., ." string", emit, char)
-- Suporte a condicionais
-- Suporte a ciclos
-- Suporte a variáveis
+**University of Minho** - Bachelor's degree in Software Engineering
+
+**Year 2024/2025**
+
+***
+
+**Practical Work:** Forth compiler
+
+**Description:** In this final project of the Compiler Design class, a Forth compiler must be implemented that must generate code for the virtual machine created in the context of this class.
+
+**Tasks:**
+Support for all arithmetic expressions: sum, addition, subtraction, division, remainder of integer division, power, grouping and priority with curly brackets
+- Support for creating functions
+- Support for printing characters and strings (., ." string", emit, char)
+- Support for conditionals
+- Support for loops
+- Support for variables
 - (...)
-
-## Equipa
-**Desenvolvido por:** Grupo ??.
-
-**Constituição do grupo**:
-- **Aluno:** Leonardo Filipe Lima Barroso, **Número:** a100894.
-- **Aluno:** Miguel Ângelo Martins Guimarães, **Número:** a100837.
-- **Aluno:** Pedro Andrade Carneiro, **Número:** a100652.
